@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>寶寶養成日誌・育嬰房</title>
+<style>
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:#fff3e2;color:#4a3426;font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;font-size:15px;line-height:1.45}
+#app{max-width:1100px;margin:0 auto;padding:8px}
+button{font:inherit;color:inherit;min-height:40px;padding:6px 10px;border:2px solid #e2b98a;background:#fffaf2;border-radius:12px;cursor:pointer;max-width:100%}
+button:hover{background:#ffeccd}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #3b82c4;outline-offset:2px}
+button.sel{background:#ffd98f;border-color:#d58a1f}
+button:disabled{opacity:.5;cursor:not-allowed}
+.topbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:space-between}
+.clockbox{font-weight:700;font-size:1.05em;min-width:0}
+.clockbox span{font-weight:400;margin-left:6px}
+.ctrl{display:flex;flex-wrap:wrap;gap:6px}
+.ctrl .help{background:#ffe0dc;border-color:#d9776b}
+.dayprog{height:8px;background:#f2dcc0;border-radius:6px;margin:6px 0;overflow:hidden}
+.dayprog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffb86b,#ff8f6b)}
+.main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:10px}
+@media(max-width:760px){.main{grid-template-columns:minmax(0,1fr)}}
+.left,.right{min-width:0}
+.stage{position:relative;border-radius:16px;overflow:hidden;border:3px solid #e2b98a;background:#fff}
+svg{width:100%;height:auto;display:block}
+#monitor{position:absolute;right:6px;bottom:6px;background:rgba(40,30,25,.82);color:#fff;border-radius:10px;padding:6px 10px;font-size:.9em;max-width:80%}
+#banner{position:absolute;left:6px;right:6px;top:6px;background:#fff6c9;border:2px solid #e0b43a;border-radius:10px;padding:6px 10px;font-size:.92em;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.bar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.zones button{flex:1 1 0;min-width:90px}
+.zones button.on{background:#ffd98f;border-color:#d58a1f;font-weight:700}
+.item{display:flex;flex-direction:column;align-items:center;min-width:76px;flex:0 1 auto;padding:4px 8px;line-height:1.2}
+.item .em{font-size:1.5em}
+.item small{font-size:.72em;color:#7a5a43}
+.item kbd{font-size:.65em;color:#a08060}
+.item.fit{border-color:#7fb77e}
+#holding{min-height:28px;font-size:.92em}
+.verbs button{flex:1 1 auto}
+.targets button{flex:1 1 0;min-width:84px;background:#eaf4ff;border-color:#7fa9d6}
+#msg{margin:6px 0;padding:8px 10px;border-radius:10px;background:#fff;border:2px solid #ecd3b0;min-height:44px}
+#msg.warn{border-color:#e38b6f;background:#fff0ea}
+#msg.ok{border-color:#79b87a;background:#eefaee}
+.card{background:#fffaf2;border:2px solid #ecd3b0;border-radius:14px;padding:8px 10px;margin-bottom:8px}
+.card h3{margin:0 0 4px;font-size:.95em;color:#8a5a2b}
+.need{display:flex;align-items:center;gap:6px;margin:3px 0;font-size:.88em}
+.need label{flex:0 0 7.2em}
+.need .track{flex:1;height:12px;background:#f1e0c8;border-radius:8px;overflow:hidden}
+.need .track i{display:block;height:100%;width:0;background:#6dbf7b;transition:width .2s}
+.need .track i.mid{background:#f0b44c}
+.need .track i.low{background:#e4766a}
+.need b{flex:0 0 2.2em;text-align:right}
+.chip{display:inline-block;margin:2px 3px 2px 0;padding:1px 8px;border-radius:12px;background:#f1e4d1;font-size:.8em}
+.chip.on{background:#cdeccd}
+.sched div{font-size:.82em;padding:2px 6px;border-radius:6px}
+.sched div.now{background:#ffd98f;font-weight:700}
+footer{font-size:.78em;color:#7a5a43;margin:8px 0}
+.overlay{position:fixed;inset:0;background:rgba(60,40,25,.55);display:flex;align-items:center;justify-content:center;padding:12px;z-index:20}
+.panel{background:#fffaf2;border-radius:18px;border:3px solid #e2b98a;padding:14px 16px;width:min(94vw,600px);max-height:92vh;overflow:auto}
+.panel h2{margin:0 0 8px}
+.panel .row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.panel .row button{flex:1 1 130px;font-weight:700}
+.sc{display:flex;align-items:center;gap:6px;margin:4px 0}
+.sc label{flex:0 0 3.2em}
+.sc .track{flex:1;height:12px;background:#f1e0c8;border-radius:8px;overflow:hidden}
+.sc .track i{display:block;height:100%;background:#ff9d57}
+.panel ul{margin:4px 0;padding-left:1.2em;font-size:.88em}
+.panel table{border-collapse:collapse;width:100%;font-size:.88em}
+.panel td,.panel th{border-bottom:1px solid #ecd3b0;padding:3px 4px;text-align:center}
+#baby-bob{transform-box:fill-box;transform-origin:center bottom;animation:breathe 3.2s ease-in-out infinite}
+#baby[data-expr="happy"] #arm-l{animation:waveL 1.3s ease-in-out infinite}
+#baby[data-expr="happy"] #arm-r{animation:waveR 1.3s ease-in-out infinite}
+#baby[data-expr="cry"] #baby-bob,#baby[data-expr="fuss"] #baby-bob{animation:shake .45s ease-in-out infinite}
+#arm-l,#arm-r{transform-box:fill-box;transform-origin:center top}
+#phone-waves{animation:ring .5s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.015,1.03)}}
+@keyframes waveL{0%,100%{transform:rotate(0)}50%{transform:rotate(-18deg)}}
+@keyframes waveR{0%,100%{transform:rotate(0)}50%{transform:rotate(18deg)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
+@keyframes ring{0%,100%{opacity:1}50%{opacity:.3}}
+.reduce *{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="topbar">
+  <div class="clockbox"><b id="clk-day" data-testid="clock-day"></b><span id="clk" data-testid="clock"></span><span id="clk-seg"></span></div>
+  <div class="ctrl">
+    <button id="btn-pause" data-testid="btn-pause">⏸ 暫停</button>
+    <button id="btn-speed" data-testid="btn-speed">速度 1x</button>
+    <button id="btn-sound" data-testid="btn-sound">🔇 音效：關</button>
+    <button id="btn-motion" data-testid="btn-motion">動態：開</button>
+    <button id="btn-help" data-testid="btn-help" class="help">🛑 停止／健康求助</button>
+  </div>
+</header>
+<div class="dayprog"><i id="dayprog"></i></div>
+
+<div class="main">
+<section class="left">
+  <div class="stage" id="stage">
+<svg id="scene" viewBox="0 0 800 440" role="img" aria-label="育嬰房場景">
+<defs>
+  <linearGradient id="wallg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffeedd"/><stop offset="1" stop-color="#ffd9bd"/></linearGradient>
+  <linearGradient id="wallc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8f6f6"/><stop offset="1" stop-color="#cfe9ea"/></linearGradient>
+  <linearGradient id="wallp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef8e6"/><stop offset="1" stop-color="#d8efc9"/></linearGradient>
+  <radialGradient id="lampg"><stop offset="0" stop-color="#fff2b0" stop-opacity=".9"/><stop offset="1" stop-color="#fff2b0" stop-opacity="0"/></radialGradient>
+</defs>
+
+<!-- 房間 -->
+<g id="sc-room">
+  <rect width="800" height="300" fill="url(#wallg)"/>
+  <g fill="#ffc9a8" opacity=".55"><circle cx="50" cy="40" r="7"/><circle cx="150" cy="80" r="5"/><circle cx="260" cy="40" r="7"/><circle cx="360" cy="90" r="5"/><circle cx="500" cy="40" r="6"/><circle cx="760" cy="90" r="6"/></g>
+  <rect y="300" width="800" height="140" fill="#d9a066"/>
+  <g stroke="#c58a4f" stroke-width="2"><line x1="0" y1="345" x2="800" y2="345"/><line x1="0" y1="392" x2="800" y2="392"/></g>
+  <ellipse cx="400" cy="398" rx="290" ry="30" fill="#f7b8a0" opacity=".7"/>
+  <g id="window"><rect x="570" y="40" width="150" height="130" rx="10" fill="#fff" stroke="#b07a4a" stroke-width="8"/><rect id="sky" x="578" y="48" width="134" height="114" fill="#bfe3ff"/><circle id="sun" cx="600" cy="130" r="15" fill="#ffd34d"/><line x1="645" y1="48" x2="645" y2="162" stroke="#b07a4a" stroke-width="5"/><line x1="578" y1="105" x2="712" y2="105" stroke="#b07a4a" stroke-width="5"/></g>
+  <g id="crib-back">
+    <rect x="70" y="150" width="270" height="170" rx="12" fill="#fff0dd" stroke="#a9753f" stroke-width="8"/>
+    <g stroke="#b98450" stroke-width="5"><line x1="100" y1="158" x2="100" y2="300"/><line x1="130" y1="158" x2="130" y2="300"/><line x1="160" y1="158" x2="160" y2="300"/><line x1="190" y1="158" x2="190" y2="300"/><line x1="220" y1="158" x2="220" y2="300"/><line x1="250" y1="158" x2="250" y2="300"/><line x1="280" y1="158" x2="280" y2="300"/><line x1="310" y1="158" x2="310" y2="300"/></g>
+    <rect x="80" y="290" width="250" height="26" rx="6" fill="#fff8ee" stroke="#e6c9a2"/>
+    <g id="crib-clutter" style="display:none"><circle cx="130" cy="272" r="20" fill="#b98450"/><circle cx="118" cy="256" r="7" fill="#b98450"/><circle cx="142" cy="256" r="7" fill="#b98450"/><circle cx="130" cy="276" r="9" fill="#e7c49a"/></g>
+  </g>
+  <g id="bench-room"><rect x="500" y="288" width="230" height="16" rx="6" fill="#f6b6c6"/><rect x="490" y="304" width="250" height="12" rx="4" fill="#b98450"/><rect x="500" y="316" width="10" height="50" fill="#a9753f"/><rect x="720" y="316" width="10" height="50" fill="#a9753f"/>
+    <g id="tray-icons"><rect x="660" y="262" width="60" height="26" rx="5" fill="#fff" stroke="#c9a37a"/><text id="tray-txt" x="665" y="280" font-size="13" fill="#6b4a33"></text></g></g>
+  <g id="shelf"><rect x="365" y="215" width="120" height="10" rx="3" fill="#b98450"/><rect x="375" y="190" width="36" height="25" rx="5" fill="#9fd5c9"/>
+    <g id="phone-g"><rect x="440" y="180" width="26" height="35" rx="5" fill="#3a3a44"/><rect x="443" y="184" width="20" height="24" rx="2" fill="#8fd0ff"/><g id="phone-waves" style="display:none" stroke="#e0662a" stroke-width="3" fill="none"><path d="M432 188 Q426 197 432 206"/><path d="M472 188 Q478 197 472 206"/></g></g></g>
+  <g id="lamp"><line x1="425" y1="0" x2="425" y2="62" stroke="#8a5a2b" stroke-width="3"/><path d="M398 100 L452 100 L440 62 L410 62Z" fill="#ffd27a" stroke="#d9a83f" stroke-width="2"/><circle id="lampglow" cx="425" cy="104" r="95" fill="url(#lampg)"/></g>
+  <rect id="hit-crib" data-target="crib" data-testid="hit-crib" x="60" y="140" width="290" height="190" fill="transparent"/>
+  <rect id="hit-bench" data-target="bench" data-testid="hit-bench" x="490" y="250" width="250" height="120" fill="transparent"/>
+</g>
+
+<!-- 清潔區 -->
+<g id="sc-clean" style="display:none">
+  <rect width="800" height="290" fill="url(#wallc)"/>
+  <g stroke="#b9dcde" stroke-width="2"><line x1="0" y1="70" x2="800" y2="70"/><line x1="0" y1="140" x2="800" y2="140"/><line x1="0" y1="210" x2="800" y2="210"/><line x1="100" y1="0" x2="100" y2="290"/><line x1="200" y1="0" x2="200" y2="290"/><line x1="300" y1="0" x2="300" y2="290"/><line x1="400" y1="0" x2="400" y2="290"/><line x1="500" y1="0" x2="500" y2="290"/><line x1="600" y1="0" x2="600" y2="290"/><line x1="700" y1="0" x2="700" y2="290"/></g>
+  <rect y="290" width="800" height="150" fill="#c9b29b"/><rect y="284" width="800" height="12" fill="#a98e72"/>
+  <ellipse cx="300" cy="312" rx="110" ry="26" fill="#eef6f8" stroke="#8aa9b0" stroke-width="4"/>
+  <path d="M300 312 L300 250 Q300 230 325 230" stroke="#9aa6ab" stroke-width="9" fill="none"/><path d="M325 230 L325 252" stroke="#9aa6ab" stroke-width="6"/>
+  <g id="water-drops" fill="#7cc7ff"><ellipse cx="325" cy="262" rx="3" ry="5"/></g>
+  <g id="trash-bin"><rect x="90" y="236" width="70" height="86" rx="8" fill="#9aa6ab"/><rect x="84" y="228" width="82" height="12" rx="5" fill="#7d8a90"/><text id="trash-txt" x="104" y="290" font-size="14" fill="#fff"></text></g>
+  <g id="rack"><rect x="520" y="300" width="200" height="12" rx="4" fill="#8f6b4b"/><g stroke="#8f6b4b" stroke-width="4"><line x1="545" y1="300" x2="545" y2="262"/><line x1="610" y1="300" x2="610" y2="262"/><line x1="675" y1="300" x2="675" y2="262"/></g></g>
+  <g id="soapdish"><rect x="410" y="296" width="50" height="14" rx="4" fill="#f4d7e2"/><rect x="418" y="284" width="34" height="14" rx="6" fill="#ffb6cf"/></g>
+  <g id="bot-a"><rect id="bot-a-body" x="542" y="236" width="30" height="62" rx="8" fill="#fff" stroke="#8a6d52" stroke-width="3"/><rect x="548" y="222" width="18" height="16" rx="6" fill="#ffd9a8" stroke="#8a6d52" stroke-width="2"/><text id="bot-a-txt" x="530" y="215" font-size="14" fill="#4a3426">A</text></g>
+  <g id="bot-b"><rect id="bot-b-body" x="640" y="236" width="30" height="62" rx="8" fill="#fff" stroke="#8a6d52" stroke-width="3"/><rect x="646" y="222" width="18" height="16" rx="6" fill="#ffd9a8" stroke="#8a6d52" stroke-width="2"/><text id="bot-b-txt" x="628" y="215" font-size="14" fill="#4a3426">B</text></g>
+  <text x="20" y="40" font-size="20" fill="#5d8a90">清潔區：洗手、洗奶瓶、備奶、倒垃圾</text>
+  <rect id="hit-bench2" data-target="bench" data-testid="hit-bench2" x="0" y="200" width="800" height="240" fill="transparent"/>
+</g>
+
+<!-- 遊戲角 -->
+<g id="sc-play" style="display:none">
+  <rect width="800" height="300" fill="url(#wallp)"/>
+  <rect y="300" width="800" height="140" fill="#d9b277"/>
+  <ellipse id="mat" cx="400" cy="345" rx="250" ry="62" fill="#ffb7a3"/><ellipse cx="400" cy="345" rx="190" ry="44" fill="#ffd9a8"/><ellipse cx="400" cy="345" rx="120" ry="26" fill="#bfe3c8"/>
+  <g stroke="#8a5a2b" stroke-width="2"><line x1="400" y1="0" x2="400" y2="60"/><line x1="340" y1="60" x2="460" y2="60"/><line x1="340" y1="60" x2="340" y2="95"/><line x1="400" y1="60" x2="400" y2="110"/><line x1="460" y1="60" x2="460" y2="90"/></g>
+  <text x="326" y="115" font-size="30">⭐</text><text x="386" y="130" font-size="30">🌙</text><text x="446" y="112" font-size="30">☁️</text>
+  <g><rect x="40" y="120" width="130" height="150" rx="8" fill="#f5deb0" stroke="#b98450" stroke-width="5"/><line x1="40" y1="195" x2="170" y2="195" stroke="#b98450" stroke-width="5"/><text x="55" y="180" font-size="30">🔔</text><text x="105" y="180" font-size="30">🪞</text><text x="55" y="255" font-size="30">📖</text><text x="105" y="255" font-size="30">🧸</text></g>
+  <text x="560" y="60" font-size="20" fill="#5f8a4f">遊戲角：適月齡的玩具</text>
+</g>
+
+<!-- 寶寶 -->
+<g id="hands" style="display:none">
+  <rect id="sleeve-l" x="-62" y="100" width="46" height="60" rx="14" fill="#e58fb0"/><rect id="sleeve-r" x="16" y="100" width="46" height="60" rx="14" fill="#e58fb0"/>
+  <ellipse cx="-34" cy="108" rx="20" ry="13" fill="#ffd2b0"/><ellipse cx="34" cy="108" rx="20" ry="13" fill="#ffd2b0"/>
+</g>
+<g id="baby" data-target="baby" data-testid="baby" data-expr="calm" tabindex="0" role="button" aria-label="寶寶">
+  <rect x="-70" y="-50" width="140" height="190" fill="transparent"/>
+  <g id="baby-bob">
+    <ellipse cx="0" cy="72" rx="34" ry="42" fill="#ffc8d8"/>
+    <g id="arm-l"><ellipse cx="-36" cy="62" rx="10" ry="22" fill="#ffc8d8" transform="rotate(20 -36 62)"/><circle cx="-43" cy="83" r="9" fill="#ffe2c6"/></g>
+    <g id="arm-r"><ellipse cx="36" cy="62" rx="10" ry="22" fill="#ffc8d8" transform="rotate(-20 36 62)"/><circle cx="43" cy="83" r="9" fill="#ffe2c6"/></g>
+    <ellipse cx="-14" cy="112" rx="13" ry="9" fill="#ffe2c6"/><ellipse cx="14" cy="112" rx="13" ry="9" fill="#ffe2c6"/>
+    <g id="face">
+      <circle cx="0" cy="0" r="38" fill="#ffe2c6"/>
+      <path d="M-12 -35 Q0 -52 12 -35" stroke="#8a5a3c" fill="none" stroke-width="4" stroke-linecap="round"/>
+      <ellipse cx="-38" cy="3" rx="6" ry="9" fill="#ffd2b0"/><ellipse cx="38" cy="3" rx="6" ry="9" fill="#ffd2b0"/>
+      <ellipse cx="-23" cy="12" rx="8" ry="5" fill="#ffb3a7" opacity=".6"/><ellipse cx="23" cy="12" rx="8" ry="5" fill="#ffb3a7" opacity=".6"/>
+      <g id="eyes-open"><circle cx="-14" cy="-4" r="5" fill="#3b2a20"/><circle cx="14" cy="-4" r="5" fill="#3b2a20"/><circle cx="-12" cy="-6" r="1.8" fill="#fff"/><circle cx="16" cy="-6" r="1.8" fill="#fff"/></g>
+      <g id="eyes-closed" style="display:none" stroke="#3b2a20" stroke-width="3" fill="none" stroke-linecap="round"><path d="M-20 -3 Q-14 3 -8 -3"/><path d="M8 -3 Q14 3 20 -3"/></g>
+      <g id="eyes-cry" style="display:none" stroke="#3b2a20" stroke-width="3" fill="none" stroke-linecap="round"><path d="M-20 -8 L-9 -4 L-20 0"/><path d="M20 -8 L9 -4 L20 0"/></g>
+      <g id="brows" style="display:none" stroke="#8a5a3c" stroke-width="3" stroke-linecap="round"><path d="M-21 -15 L-8 -11"/><path d="M21 -15 L8 -11"/></g>
+      <path id="m-smile" d="M-10 16 Q0 27 10 16" stroke="#b5524a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse id="m-o" cx="0" cy="20" rx="4" ry="3" fill="#c8504f" style="display:none"/>
+      <path id="m-cry" d="M-13 16 Q0 38 13 16 Z" fill="#c8504f" style="display:none"/>
+      <path id="m-flat" d="M-7 20 L7 20" stroke="#b5524a" stroke-width="3" stroke-linecap="round" style="display:none"/>
+      <path id="m-sated" d="M-6 21 Q0 17 6 21" stroke="#b5524a" stroke-width="3" fill="none" stroke-linecap="round" style="display:none"/>
+      <g id="tears" style="display:none" fill="#7cc7ff"><ellipse cx="-22" cy="12" rx="3" ry="7"/><ellipse cx="22" cy="12" rx="3" ry="7"/></g>
+    </g>
+    <text id="zzz" x="36" y="-30" font-size="22" style="display:none">💤</text>
+  </g>
+</g>
+<g id="room-front"><rect x="70" y="298" width="270" height="36" rx="8" fill="#c28a52"/><rect x="70" y="298" width="270" height="6" fill="#a9753f"/></g>
+<rect id="dim" width="800" height="440" fill="#1a1a4a" opacity="0" pointer-events="none"/>
+</svg>
+    <div id="monitor" data-testid="monitor" hidden></div>
+    <div id="banner" data-testid="event-banner" hidden><span id="banner-txt"></span><button id="phone-silence" data-testid="phone-silence" hidden>🔕 靜音（不接）</button></div>
+  </div>
+
+  <nav class="bar zones" id="zones" aria-label="區域">
+    <button data-zone="room" data-testid="zone-room">🛏 房間 <small>(Z)</small></button>
+    <button data-zone="clean" data-testid="zone-clean">🚰 清潔區 <small>(X)</small></button>
+    <button data-zone="play" data-testid="zone-play">🧸 遊戲角 <small>(C)</small></button>
+  </nav>
+  <div id="holding" data-testid="holding"></div>
+  <div class="bar" id="items" data-testid="itembar" aria-label="物品列"></div>
+  <div class="bar targets" id="targets">
+    <button data-target="baby" data-testid="target-baby">對寶寶使用 <small>(B)</small></button>
+    <button data-target="bench" data-testid="target-bench">對工作台使用 <small>(T)</small></button>
+    <button data-target="crib" data-testid="target-crib">對嬰兒床使用 <small>(K)</small></button>
+    <button id="use-btn" data-testid="use-btn">使用 <small>(Enter)</small></button>
+  </div>
+  <div class="bar verbs" id="verbs" aria-label="動作">
+    <button data-act="pickup" data-testid="act-pickup" data-z="room play clean">🤱 抱起</button>
+    <button data-act="steady" data-testid="act-steady" data-z="room play clean">🫶 托穩頭頸</button>
+    <button data-act="hug" data-testid="act-hug" data-z="room play clean">🤗 抱抱</button>
+    <button data-act="burp" data-testid="act-burp" data-z="room play clean">👋 拍嗝</button>
+    <button data-act="soothe" data-testid="act-soothe" data-z="room play clean">🎶 輕拍安撫</button>
+    <button data-act="feedstop" data-testid="act-feed-stop" data-z="room play clean">✋ 停止餵奶</button>
+    <button data-act="putdown" data-testid="act-putdown" data-z="room">🛏 放回床（仰睡）</button>
+    <button data-act="clearcrib" data-testid="act-clearcrib" data-z="room">🧹 清空床面</button>
+    <button data-act="table" data-testid="act-table" data-z="room">🪑 放上尿布台</button>
+    <button data-act="open" data-testid="act-open" data-z="room">🩲 開尿布</button>
+    <button data-act="mat" data-testid="act-mat" data-z="play">🟠 放遊戲墊</button>
+    <button data-act="washhands" data-testid="act-washhands" data-z="clean">🧼 洗手</button>
+    <button data-act="trash" data-testid="act-trash" data-z="clean">🗑 倒垃圾</button>
+    <button data-act="handover" data-testid="act-handover" data-z="room play clean">🤝 交接／接回</button>
+    <button data-act="rest" data-testid="act-rest" data-z="room play clean">☕ 休息</button>
+  </div>
+  <p id="msg" role="status" aria-live="polite" data-testid="msg"></p>
+  <button id="end-day-btn" data-testid="end-day-btn">🏁 提前收工結算今天</button>
+</section>
+
+<aside class="right">
+  <div class="card" id="needs" data-testid="needs"><h3>寶寶與照顧者狀態</h3></div>
+  <div class="card"><h3>觀察</h3><div id="obs" data-testid="observation"></div><div id="expr" data-testid="baby-expr" style="margin-top:4px;font-size:.85em"></div></div>
+  <div class="card"><h3>流程進度（可以不照順序做，但會被提醒）</h3>
+    <div>餵奶：<span id="chk-feed" data-testid="chk-feed"></span></div>
+    <div>尿布：<span id="chk-diaper" data-testid="chk-diaper"></span></div>
+    <div>睡覺：<span id="chk-sleep" data-testid="chk-sleep"></span></div>
+    <div>用品：<span id="chk-stuff" data-testid="chk-stuff"></span></div>
+  </div>
+  <div class="card sched" id="sched" data-testid="schedule"><h3>今日日程</h3></div>
+</aside>
+</div>
+<footer>本版不保存進度：重新整理頁面就會重新開始。純離線、無外部資源。遊戲內容是簡化的照顧情境，不是醫療建議。快捷鍵：Z/X/C 換區、1–9 選物品、B/T/K 對寶寶／工作台／床使用、P 暫停。</footer>
+</div>
+
+<!-- 覆蓋層 -->
+<div class="overlay" id="ov-title" data-testid="title-overlay">
+  <div class="panel">
+    <h2>🍼 寶寶養成日誌</h2>
+    <p>育嬰房裡有一位小寶寶。你要在四天（代表 1～4 月齡四個階段，並非真實成長速度）裡，自由安排餵奶、換尿布、抱抱、拍嗝、哄睡、陪玩，並照顧好自己的體力。</p>
+    <ul>
+      <li>需求會隨時間變化：肚子飽足、清潔、精神、情緒，以及照顧者體力。</li>
+      <li>先點選物品，再對寶寶／工作台／嬰兒床使用（也可拖曳或用鍵盤）。</li>
+      <li>爸爸、媽媽規則完全相同；另一位會幫忙抱著寶寶，讓你去清潔區。</li>
+      <li>沒有死亡或重病；表現會在每天結算，只用來學習，不是醫療評估。</li>
+      <li>本版不保存進度；離開分頁時時間會暫停。</li>
+    </ul>
+    <p>你是：</p>
+    <div class="row"><button data-testid="start-mom" data-start="mom">👩 媽媽</button><button data-testid="start-dad" data-start="dad">👨 爸爸</button></div>
+  </div>
+</div>
+<div class="overlay" id="ov-pause" data-testid="pause-overlay" hidden>
+  <div class="panel"><h2>⏸ 已暫停</h2><p id="pause-why">時間已停止，恢復時不會補算。</p><div class="row"><button id="resume-btn" data-testid="resume-btn">▶ 繼續</button></div></div>
+</div>
+<div class="overlay" id="ov-help" data-testid="help-overlay" hidden>
+  <div class="panel">
+    <h2>🛑 已停止　健康求助</h2>
+    <p>遊戲時間已停止。這個遊戲<b>不是醫療建議</b>，不會診斷，也不提供任何用藥或劑量。</p>
+    <ul>
+      <li>如果現實中的寶寶出現呼吸困難、臉色或嘴唇發紫、叫不醒或軟趴趴、抽搐，或任何讓你覺得「真的不對勁」的情況，請立刻撥打當地緊急電話（例如台灣 119）或前往最近的急診。</li>
+      <li>其他擔心，請聯絡小兒科醫師、護理師或當地的兒童健康諮詢管道。</li>
+      <li>尋求協助很正常，也不是失敗；它不會影響這個遊戲的任何分數。</li>
+    </ul>
+    <div class="row"><button id="help-close" data-testid="help-close">我知道了（回到遊戲，仍保持暫停）</button></div>
+  </div>
+</div>
+<div class="overlay" id="ov-day" data-testid="daysum-overlay" hidden><div class="panel" id="day-panel"></div></div>
+<div class="overlay" id="ov-final" data-testid="final-overlay" hidden><div class="panel" id="final-panel"></div></div>
+
+<script>
+(function () {
+'use strict';
+var TEST = /[?&]test=1(&|$)/.test(location.search);
+var MANUAL = TEST && /[?&]manual=1(&|$)/.test(location.search);
+var DAY_LEN = 180, MIN_END = 60, MAXDAY = 4;
+var AGE = {
+  1: { name: '1月齡', food: 0.36, rest: 0.45, sip: 8, full: 82 },
+  2: { name: '2月齡', food: 0.34, rest: 0.40, sip: 8, full: 82 },
+  3: { name: '3月齡', food: 0.32, rest: 0.36, sip: 7, full: 72 },
+  4: { name: '4月齡', food: 0.30, rest: 0.32, sip: 7, full: 82 }
+};
+var WINS = [
+  [0, 37.5, '07:00–09:30 晨間：餵奶、換尿布', 1, 1],
+  [37.5, 67.5, '09:30–11:30 清醒時段：玩耍、抱抱', 1, 1],
+  [67.5, 105, '11:30–14:00 午睡視窗：比較容易想睡', 1.35, 1],
+  [105, 142.5, '14:00–16:30 午後：餵奶與玩耍', 1, 1.1],
+  [142.5, 180.1, '16:30–19:00 傍晚：安撫、準備睡覺', 1.2, 1]
+];
+var EVENTS = {
+  1: [{ t: 70, k: 'phone' }],
+  2: [{ t: 40, k: 'supply' }, { t: 115, k: 'phone' }],
+  3: [{ t: 20, k: 'picky' }, { t: 55, k: 'phone' }],
+  4: [{ t: 25, k: 'supply' }, { t: 95, k: 'phone' }]
+};
+var TARGET = { feed: 3, diaper: 2, sleep: 2, play: 2, hug: 1 };
+var CAP = { feed: 4, diaper: 3, sleep: 3, play: 3, hug: 2 };   /* 每天每種循環的計數上限 */
+var STIM_COST = 20, STIM_RATE = 0.4;                           /* 「想玩」需求：每次陪玩消耗、醒著時回升速度 */
+var CYC_NAME = { feed: '餵奶（含拍嗝）', diaper: '換尿布（含洗手）', sleep: '哄睡', play: '陪玩', hug: '抱抱' };
+var NAMES = { mom: '媽媽', dad: '爸爸' };
+var ITEMS = {
+  'bottle-a': { n: '奶瓶A', e: '🍼' }, 'bottle-b': { n: '奶瓶B', e: '🍼' },
+  diaper: { n: '新尿布', e: '🩲' }, wipes: { n: '濕巾', e: '🧻' }, cloth: { n: '小方巾', e: '🧽' },
+  towel: { n: '乾毛巾', e: '🧣' }, lamp: { n: '夜燈調光', e: '💡' },
+  soap: { n: '肥皂', e: '🧼' }, brush: { n: '奶瓶刷', e: '🪥' }, water: { n: '清水沖洗', e: '🚿' },
+  rack: { n: '瀝水架', e: '🧺' }, milk: { n: '奶粉／母乳', e: '🥛' }, wrist: { n: '手腕試溫', e: '✋' },
+  'toy-card': { n: '黑白對比卡', e: '🃏', min: 1, max: 3 },
+  'toy-rattle': { n: '輕搖鈴', e: '🔔', min: 1, max: 4 },
+  'toy-mirror': { n: '安全嬰兒鏡', e: '🪞', min: 2, max: 4 },
+  'toy-book': { n: '軟布書', e: '📖', min: 3, max: 4 },
+  'toy-teether': { n: '固齒咬環', e: '⭕', min: 4, max: 4 },
+  'toy-plush': { n: '軟絨小熊', e: '🧸', min: 3, max: 4 },
+  'toy-beads': { n: '小珠串', e: '📿', bad: '小零件' },
+  'toy-blocks': { n: '硬積木', e: '🧱', bad: '太大月齡' }
+};
+var ZONE_ITEMS = {
+  room: ['bottle-a', 'bottle-b', 'diaper', 'wipes', 'cloth', 'towel', 'lamp'],
+  clean: ['soap', 'brush', 'water', 'rack', 'milk', 'wrist', 'cloth', 'bottle-a', 'bottle-b'],
+  play: ['toy-card', 'toy-rattle', 'toy-mirror', 'toy-book', 'toy-teether', 'toy-plush', 'toy-beads', 'toy-blocks']
+};
+var BST = { dirty: '髒污', soaped: '已抹肥皂', scrubbed: '已刷洗', rinsed: '已沖淨', drying: '瀝乾中', ready: '乾淨可用', filled: '已裝奶・未試溫', tested: '溫度剛好' };
+var CLST = { dry: '乾淨乾燥', wet: '已沾濕', dirty: '用過待洗' };
+var EXPR_TXT = { sleep: '睡著了 😴', cry: '哭泣 😭', fuss: '不太舒服 😣', sated: '轉頭閉嘴（飽了）🙅', happy: '開心 😊', calm: '平靜 🙂' };
+var EXPR_EM = { sleep: '😴', cry: '😭', fuss: '😣', sated: '🙅', happy: '😊', calm: '🙂' };
+
+var S = null;
+var $ = function (id) { return document.getElementById(id); };
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function other(cg) { return cg === 'mom' ? 'dad' : 'mom'; }
+
+/* ---------- 狀態 ---------- */
+function newDay() {
+  return { orderErr: 0, unsafe: 0, clutter: 0, unsteady: 0, overfeed: 0, mismatch: 0, disturb: 0, incomplete: 0, unburped: 0,
+    cycles: { feed: 0, diaper: 0, sleep: 0, play: 0, hug: 0 }, handovers: 0, rests: 0, chores: 0,
+    goodT: 0, totT: 0, stSum: 0, events: [], early: false };
+}
+function newFeed() { return { active: false, sips: 0, signal: false, startFood: 0, needBurp: false, pats: 0, tried: false, stopped: false, burped: false, valid: false }; }
+function addCycle(k) {
+  if (S.d.cycles[k] >= CAP[k]) {
+    if (S.lastErr['cap' + k] === undefined) { S.lastErr['cap' + k] = S.now; ev('cap', CYC_NAME[k] + '今天已經做得夠多了，不再計入'); }
+    return false;
+  }
+  S.d.cycles[k]++; return true;
+}
+function reduceDefault() { try { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } }
+function resetAll() {
+  S = { phase: 'title', cg: 'mom', day: 1, clock: 0, now: 0, speed: 1, paused: false, pauseWhy: '', helpOpen: false,
+    sound: false, reduce: reduceDefault(), zone: 'room', sel: null, msg: '', msgKind: 'info',
+    stamina: { mom: 100, dad: 100 }, history: [], final: null };
+  initDay();
+  S.msg = '請先選擇你是媽媽還是爸爸，開始照顧寶寶。';
+}
+function initDay() {
+  S.clock = 0; S.zone = 'room'; S.resting = false;
+  S.baby = { food: 55, soil: 30, rest: 75, mood: 75, gas: 0, loc: 'crib', asleep: false, steady: false, calm: 0, calmAt: -99, drowse: 0, sleepT: 0, sleepCounted: false, stim: 60 };
+  if (S.day > 1) { S.stamina.mom = Math.min(100, S.stamina.mom + 35); S.stamina.dad = Math.min(100, S.stamina.dad + 35); }
+  S.hands = { mom: true, dad: true };
+  S.lamp = false; S.crib = { clutter: false };
+  S.bottles = [{ id: 'a', st: 'ready', t: 0 }, { id: 'b', st: 'dirty', t: 0 }];
+  S.stock = { diaper: 5, wipes: 6 }; S.cloth = { st: 'dry' };
+  S.tray = { diaper: false, clean: null, towel: false }; S.trash = 0;
+  S.diaper = { step: 0, valid: false, completed: false, washed: false, pendingWash: false };
+  S.feed = newFeed(); S.play = { prog: 0, last: null, streak: 0, hugN: 0, at: -99 };
+  S.phone = { ringing: false, until: 0, warn: 0 }; S.banner = null;
+  S.d = newDay(); S.cd = {}; S.lastErr = {}; S.sel = null;
+  S.evq = EVENTS[S.day].map(function (e) { return { t: e.t, k: e.k, done: false }; });
+}
+function win(c) { for (var i = 0; i < WINS.length; i++) if (c >= WINS[i][0] && c < WINS[i][1]) return { label: WINS[i][2], rm: WINS[i][3], fm: WINS[i][4], i: i }; return { label: WINS[4][2], rm: 1.2, fm: 1, i: 4 }; }
+
+/* ---------- 工具 ---------- */
+function say(t, k) { S.msg = t; S.msgKind = k || 'info'; }
+function ev(type, text) { S.d.events.push({ day: S.day, t: Math.round(S.clock), type: type, text: text }); }
+function oerr(key, text) {
+  var last = S.lastErr[key];
+  if (last === undefined || S.now - last > 3) { S.d.orderErr++; S.lastErr[key] = S.now; ev('order', text); }
+  say(text, 'warn');
+}
+function dist(key, text) {
+  var last = S.lastErr[key];
+  if (last === undefined || S.now - last > 3) { S.d.disturb++; S.lastErr[key] = S.now; ev('disturb', text); }
+  say(text, 'warn');
+}
+function tiredF() { return S.stamina[S.cg] < 25 ? 1.5 : 1; }
+function cdOk(key, secs) {
+  if (S.cd[key] !== undefined && S.now < S.cd[key]) return false;
+  S.cd[key] = S.now + secs * tiredF(); return true;
+}
+function spend(n) { S.stamina[S.cg] = Math.max(0, S.stamina[S.cg] - n * tiredF()); }
+function guard() { return S.phase === 'play' && !S.paused; }
+function banner(text, kind, secs) { S.banner = { text: text, kind: kind, until: S.clock + secs }; }
+function babyVisible() {
+  var l = S.baby.loc, z = S.zone;
+  if (l === 'crib' || l === 'table') return z === 'room';
+  if (l === 'mat') return z === 'play';
+  return z !== 'clean';
+}
+function needVisible() { if (!babyVisible()) { say('寶寶不在這個區域。', 'warn'); return false; } return true; }
+function fmtClock() { var m = 420 + Math.floor(S.clock / DAY_LEN * 720); return ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2); }
+var AC = null;
+function beep(f, d) {
+  if (!S.sound) return;
+  try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); var o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = f; g.gain.value = 0.04; o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime + d); } catch (e) { /* 無音效也能玩 */ }
+}
+function expr() {
+  var b = S.baby, cl = 100 - b.soil;
+  if (b.asleep) return 'sleep';
+  if (S.feed.active && S.feed.signal) return 'sated';
+  if (b.mood < 30 || b.food < 20 || cl < 20 || b.rest < 20) return 'cry';
+  if (b.mood < 50 || b.food < 40 || cl < 40 || b.rest < 35 || b.gas >= 60) return 'fuss';
+  if (b.mood >= 70) return 'happy';
+  return 'calm';
+}
+function observe() {
+  var b = S.baby, cl = 100 - b.soil;
+  if (b.asleep) return '寶寶睡著了，胸口輕輕起伏。小聲一點，別吵醒他。';
+  if (S.feed.active && S.feed.signal) return '寶寶轉開頭、嘴巴抿起來，不再吸吮——這是吃飽的訊號。';
+  if (b.food < 45) return '寶寶一直吸吮小拳頭，嘴巴張開在找東西。';
+  if (cl < 55) return '寶寶扭來扭去，尿布看起來濕濕鼓鼓的。';
+  if (b.gas >= 45) return '寶寶身體有點弓起來，肚子鼓鼓的，哼哼叫。';
+  if (b.rest < 40) return '寶寶揉眼睛、打哈欠，眼神有點放空。';
+  if (b.mood < 45) return '寶寶皺著眉頭，伸手像在找人抱。';
+  if (b.stim >= 70) return '寶寶睜大眼睛四處張望，好像很想玩。';
+  if (b.mood >= 70) return '寶寶眼睛亮亮地四處張望，小手揮呀揮。';
+  return '寶寶安靜地看著你。';
+}
+
+/* ---------- 計分 ---------- */
+function scoreNow() {
+  var d = S.d, frac = Math.min(1, S.clock / DAY_LEN), need = 0, got = 0, k;
+  for (k in TARGET) { var t = Math.max(1, Math.ceil(TARGET[k] * frac)); need += t; got += Math.min(d.cycles[k], t); }
+  var coverage = got / need, timeFrac = d.totT > 0 ? d.goodT / d.totT : 1;
+  var avgSt = d.totT > 0 ? d.stSum / d.totT : (S.stamina.mom + S.stamina.dad) / 2;
+  /* 安全、順序、休息是「做事時沒出錯」的分數；完全沒照護就沒有出錯機會，不能因此拿高分，故依實際完成度打折 */
+  var eng = 0.3 + 0.7 * coverage;
+  var safety = clamp(100 - 15 * d.unsafe - 12 * d.clutter - 4 * d.unsteady, 0, 100) * eng;
+  var resp = clamp(50 * timeFrac + 50 * coverage - 8 * d.overfeed - 4 * d.mismatch - 6 * d.disturb, 0, 100);
+  var order = clamp(100 - 6 * d.orderErr - 10 * d.incomplete, 0, 100) * eng;
+  var rest = clamp(avgSt, 0, 100) * eng;
+  var total = 0.3 * safety + 0.3 * resp + 0.25 * order + 0.15 * rest;
+  return { safety: Math.round(safety), resp: Math.round(resp), order: Math.round(order), rest: Math.round(rest), total: Math.round(total) };
+}
+
+/* ---------- 模擬 ---------- */
+function wake(why, mood) {
+  var b = S.baby; if (!b.asleep) return;
+  b.asleep = false; b.sleepT = 0; b.sleepCounted = false; b.drowse = 0; b.calm = 0;
+  if (mood) b.mood = Math.max(0, b.mood - mood);
+  ev('sleep', '寶寶醒了：' + why);
+}
+function fire(k) {
+  if (k === 'phone') {
+    S.phone = { ringing: true, until: S.clock + 14, warn: 0 };
+    banner('📱 手機響了——不用接，按「靜音」就好。寶寶比較重要。', 'phone', 14);
+    ev('phone', '手機響了（安全打斷事件，不用接）'); beep(880, 0.2);
+  } else if (k === 'supply') {
+    S.stock.wipes = 0;
+    banner('🧻 濕巾用完了！可以拿小方巾到清潔區沾濕代替。', 'supply', 25);
+    ev('supply', '換尿布用品不足：濕巾用完，要改用濕方巾');
+  } else if (k === 'picky') {
+    banner('🍼 今天寶寶飽得比較快，留意轉頭、閉嘴的飽足訊號。', 'info', 20);
+    ev('picky', '今天胃口小，飽足訊號出現得比較早');
+  }
+}
+function step(dt) {
+  if (S.phase !== 'play' || S.paused) return;
+  var b = S.baby, A = AGE[S.day], W = win(S.clock), D = S.d;
+  S.clock += dt; S.now += dt;
+  S.bottles.forEach(function (x) { if (x.st === 'drying') { x.t -= dt; if (x.t <= 0) { x.st = 'ready'; } } });
+  S.evq.forEach(function (e) { if (!e.done && S.clock >= e.t) { e.done = true; fire(e.k); } });
+  if (S.banner && S.clock >= S.banner.until) S.banner = null;
+  if (S.phone.ringing) {
+    if (b.asleep) { S.phone.warn += dt; if (S.phone.warn > 5) wake('手機鈴聲吵醒了', 4); }
+    if (S.clock >= S.phone.until) { S.phone.ringing = false; ev('phone', '手機響完了，沒接也沒關係。'); }
+  }
+  var cl = 100 - b.soil;
+  var bad = (b.food < 35 ? 1 : 0) + (b.soil > 65 ? 1 : 0) + (b.rest < 30 ? 1 : 0) + (b.gas >= 60 ? 1 : 0);
+  if (b.asleep) {
+    b.rest = Math.min(100, b.rest + 1.2 * dt); b.mood = Math.min(100, b.mood + 0.2 * dt);
+    b.food = Math.max(0, b.food - A.food * 0.5 * dt); b.soil = Math.min(100, b.soil + 0.1 * dt);
+    b.sleepT += dt;
+    if (b.sleepT >= 15 && !b.sleepCounted && b.loc === 'crib' && !S.crib.clutter) { b.sleepCounted = true; if (addCycle('sleep')) { ev('sleep', '安穩睡了一段時間（哄睡完成）'); beep(520, 0.15); } }
+    if (S.crib.clutter) { wake('床上有雜物，睡覺的床要平坦、空無一物', 2); say('床上有雜物，寶寶被吵醒了。請「清空床面」。', 'warn'); }
+    else if (b.rest >= 96) wake('睡飽了', 0);
+    else if (b.food < 15) wake('肚子餓了', 3);
+    else if (b.soil > 85) wake('尿布不舒服', 3);
+    else if (b.gas >= 70) wake('肚子脹脹的', 3);
+  } else {
+    b.food = Math.max(0, b.food - A.food * W.fm * dt);
+    b.soil = Math.min(100, b.soil + 0.15 * dt);
+    b.rest = Math.max(0, b.rest - A.rest * W.rm * dt);
+    b.stim = Math.min(100, b.stim + STIM_RATE * dt);
+    var md = 0.10 + 0.10 * bad;
+    if (b.loc === 'partner' || b.loc === 'arms') md -= 0.05;
+    b.mood = clamp(b.mood - md * dt, 0, 100);
+    var ready = b.loc === 'crib' && !S.crib.clutter && S.lamp && b.calm >= (b.rest < 25 ? 3 : 2) && b.rest <= 72 && b.food >= 30 && cl >= 35 && b.gas < 30;
+    if (ready) { b.drowse += dt; if (b.drowse >= 5) { b.asleep = true; b.sleepT = 0; b.sleepCounted = false; b.drowse = 0; ev('sleep', '寶寶在暗暗的房間裡被安撫後睡著了'); say('寶寶睡著了。', 'ok'); } }
+    else b.drowse = Math.max(0, b.drowse - dt);
+  }
+  if (S.now - b.calmAt > 25) b.calm = 0;
+  b.gas = Math.max(0, b.gas - 0.03 * dt);
+  /* 照顧者體力 */
+  var me = S.cg, pa = other(me), holdingP = b.loc === 'partner';
+  var crying = expr() === 'cry';
+  S.stamina[me] = clamp(S.stamina[me] + (S.resting ? 1.0 : -(0.12 + (crying ? 0.06 : 0))) * dt, 0, 100);
+  S.stamina[pa] = clamp(S.stamina[pa] + (holdingP ? -0.12 : 0.35) * dt, 0, 100);
+  if (S.resting && !(b.asleep && b.loc === 'crib') && !holdingP) { S.resting = false; say('寶寶醒了，休息結束。', 'info'); }
+  if (holdingP && S.stamina[pa] <= 8) {
+    b.loc = 'crib'; b.steady = false; S.crib.clutter = false; S.resting = false;
+    say(NAMES[pa] + '手酸了，把寶寶輕輕放回床上（仰睡）。', 'info'); ev('handover', NAMES[pa] + '體力用完，把寶寶放回床上');
+  }
+  D.totT += dt;
+  if (Math.min(b.food, 100 - b.soil, b.rest, b.mood) >= 35) D.goodT += dt;
+  D.stSum += (S.stamina.mom + S.stamina.dad) / 2 * dt;
+  if (S.clock >= DAY_LEN) { S.clock = DAY_LEN; finishDay(false); }
+}
+function advance(sec) {
+  var r = sec;
+  while (r > 1e-9 && S.phase === 'play' && !S.paused) { var dt = Math.min(0.25, r); step(dt); r -= dt; }
+  render(); return S.clock;
+}
+/* 日結前先收尾進行中的照護：先停止餵奶、記下未完成，再把寶寶安置回平坦空床 */
+function settleCare() {
+  var b = S.baby, F = S.feed, T = S.diaper, D = S.d;
+  if (F.active) { ACT.feedstop(); D.incomplete++; ev('order', '餵奶到一半就收工了：已先停止餵奶'); }
+  if (F.needBurp) {
+    if (F.tried) ev('feed', '收工時餵奶後有溫柔拍嗝（沒打出嗝也不勉強）');
+    else { D.incomplete++; ev('order', '餵奶後沒有拍嗝就收工了'); }
+    F.needBurp = false;
+  }
+  if (b.loc === 'table' && T.step >= 1 && T.step < 5) { D.incomplete++; ev('order', '換尿布做到一半就收工了'); }
+  if (S.crib.clutter) { S.crib.clutter = false; ev('safety', '收工前先清空嬰兒床上的雜物'); }
+  if (b.loc !== 'crib') {
+    ev('safety', '收工前把寶寶安置回平坦空床（仰睡）');
+    b.loc = 'crib'; b.steady = false; T.step = 0; S.resting = false;
+  }
+}
+function finishDay(early) {
+  if (S.phase !== 'play') return;
+  var D = S.d;
+  D.early = early;
+  settleCare();
+  if (S.diaper.pendingWash) { D.incomplete++; ev('order', '換完尿布沒有洗手就收工了'); }
+  var sc = scoreNow();
+  S.history.push({ day: S.day, scores: sc, cycles: JSON.parse(JSON.stringify(D.cycles)), events: D.events.slice(), early: early,
+    handovers: D.handovers, rests: D.rests, chores: D.chores, clock: Math.round(S.clock) });
+  S.phase = 'daysum'; S.resting = false; S.sel = null;
+  render();
+}
+function nextDay() {
+  if (S.phase !== 'daysum') return;
+  if (S.day >= MAXDAY) {
+    var sum = 0; S.history.forEach(function (h) { sum += h.scores.total; });
+    var avg = Math.round(sum / S.history.length), r;
+    if (avg >= 88) r = { grade: 'S', title: '🏅 安心守護者', text: '你把安全、回應、順序和自己的休息都顧得很好。' };
+    else if (avg >= 75) r = { grade: 'A', title: '🌟 溫暖的好照顧者', text: '大部分時候都穩穩接住寶寶，還有一點小地方可以更順。' };
+    else if (avg >= 60) r = { grade: 'B', title: '🌱 逐漸上手', text: '你正在摸索寶寶的節奏，這很正常——多觀察訊號，再玩一次會更順。' };
+    else r = { grade: 'C', title: '🤍 繼續練習中', text: '照顧本來就需要時間學習。看看每天的事件回顧，下次試著先觀察再行動。' };
+    r.avg = avg; S.final = r; S.phase = 'final';
+  } else { S.day++; S.phase = 'play'; initDay(); say('新的一天開始了（' + AGE[S.day].name + '階段）。家人補了貨、整理好房間。', 'info'); ev('day', '第' + S.day + '天開始'); }
+  render();
+}
+
+/* ---------- 動作 ---------- */
+/* 移動寶寶（尿布台、遊戲墊、交接）前：要先停止餵奶；剛餵完要先溫柔拍背（不強迫一定打出嗝） */
+function moveGate(key, what) {
+  var F = S.feed;
+  if (F.active) { oerr(key, '先停止餵奶，再' + what + '。'); return true; }
+  if (F.needBurp) {
+    if (!F.tried) { oerr(key, '剛停止餵奶，先溫柔拍拍背（不用勉強打嗝）再' + what + '。'); return true; }
+  }
+  return false;
+}
+/* 移動確定成功後才清掉「待拍嗝」，並記下有溫柔拍嗝但沒打出嗝 */
+function leaveBurp(what) {
+  var F = S.feed;
+  if (F.needBurp) { F.needBurp = false; F.tried = false; ev('feed', '有溫柔拍嗝，沒打出嗝也不勉強，接著' + what); }
+}
+/* 手抱照護共用檢查：抱著但未托穩 → 記一次安全警示並拒絕（警示本身不加分） */
+function unsteadyArms(key, text) {
+  var b = S.baby;
+  if (b.loc === 'arms' && !b.steady) { S.d.unsteady++; oerr(key, text); return true; }
+  return false;
+}
+var ACT = {
+  pickup: function () {
+    var b = S.baby, D = S.diaper;
+    if (!needVisible()) return;
+    if (b.loc === 'arms') { say('已經抱著寶寶了。'); return; }
+    if (b.loc === 'partner') {
+      if (S.zone === 'clean') { oerr('cleanbaby', '清潔區不適合帶寶寶，先回房間再接回寶寶。'); return; }
+      b.loc = 'arms'; b.steady = true; S.resting = false; say('接回寶寶，抱穩了。', 'ok'); return;
+    }
+    if (b.loc === 'table' && D.step >= 2 && D.step < 5) { oerr('tableleave', '尿布還沒換完，手不能離開寶寶，請先完成步驟。'); return; }
+    if (b.loc === 'table') D.step = 0;
+    if (b.asleep) wake('被抱起來了', 0);
+    b.loc = 'arms'; b.steady = false; spend(0.8);
+    say('抱起來了。先「托穩頭頸」再餵奶、拍嗝或抱抱。', 'info');
+  },
+  steady: function () {
+    var b = S.baby; if (!needVisible()) return;
+    if (b.loc !== 'arms') { oerr('steady', '要先抱起寶寶才能托穩。'); return; }
+    if (b.steady) { say('已經托穩了。'); return; }
+    b.steady = true; spend(0.3); say('一手托住頭頸、一手托住屁股，抱穩了。', 'ok');
+  },
+  hug: function () {
+    var b = S.baby; if (!needVisible()) return;
+    if (b.loc !== 'arms') { oerr('hug', '先把寶寶抱起來再抱抱。'); return; }
+    if (!b.steady) { S.d.unsteady++; oerr('unsteadyhug', '還沒托穩頭頸，先托穩再抱。'); return; }
+    if (b.asleep) { dist('hugsleep', '寶寶睡著了，先不要吵醒他。'); return; }
+    if (!cdOk('hug', 3)) { say('讓寶寶享受一下，慢一點～'); return; }
+    var valid = b.mood <= 88;
+    b.mood = Math.min(100, b.mood + (valid ? 8 : 2)); spend(0.6);
+    if (valid) { S.play.hugN++; if (S.play.hugN >= 2) { S.play.hugN = 0; if (addCycle('hug')) { ev('hug', '好好抱抱了寶寶一會兒'); beep(660, 0.12); } } }
+    say(valid ? '輕輕抱抱，寶寶靠在你胸口，放鬆多了。' : '寶寶現在心情很好，不用一直抱。', valid ? 'ok' : 'info');
+  },
+  burp: function () {
+    var b = S.baby, F = S.feed; if (!needVisible()) return;
+    if (b.loc !== 'arms') { oerr('burp', '拍嗝要把寶寶抱起來。'); return; }
+    if (!b.steady) { S.d.unsteady++; oerr('unsteadyburp', '拍嗝前先托穩頭頸。'); return; }
+    if (b.asleep) { dist('burpsleep', '寶寶睡著了，先不要拍。'); return; }
+    if (!F.needBurp && b.gas < 25) { say('寶寶現在不需要拍嗝。'); return; }
+    if (!cdOk('burp', 1.2)) { say('輕輕拍就好，慢一點。'); return; }
+    F.pats++; spend(0.5);
+    if (F.needBurp) F.tried = true;
+    var need = b.gas < 30 ? 2 : 3;
+    if (F.pats >= need) {
+      F.pats = 0; b.gas = 0; b.soil = Math.min(100, b.soil + (F.needBurp ? 8 : 0)); b.mood = Math.min(100, b.mood + 4);
+      if (F.needBurp) { F.needBurp = false; F.burped = true; if (F.valid) { if (addCycle('feed')) { ev('feed', '餵奶完成：吃飽停止＋拍嗝'); beep(600, 0.15); } } else ev('feed', '拍嗝完成（這次餵得不多或寶寶本來不太餓）'); }
+      say('嗝～寶寶打出一個小嗝，舒服多了。', 'ok');
+    } else say('輕輕拍背（' + F.pats + '/' + need + '）……', 'info');
+  },
+  soothe: function () {
+    var b = S.baby; if (!needVisible()) return;
+    if (b.loc !== 'arms' && b.loc !== 'crib') { say('寶寶要在你手上或在嬰兒床裡才能輕拍安撫。', 'warn'); return; }
+    if (unsteadyArms('unsteadysoothe', '還沒托穩頭頸，先托穩再安撫。')) return;
+    if (b.asleep) { say('寶寶已經睡著了。'); return; }
+    if (!cdOk('soothe', 2)) { say('慢慢來，輕輕拍、小聲說話。'); return; }
+    b.calm = Math.min(3, b.calm + 1); b.calmAt = S.now; b.mood = Math.min(100, b.mood + (b.mood < 90 ? 3 : 0)); spend(0.5);
+    say('輕拍、低聲哼歌，寶寶慢慢放鬆（安撫 ' + b.calm + '）。', 'ok');
+  },
+  feedstop: function () {
+    var F = S.feed, b = S.baby;
+    if (!F.active) { say('現在沒有在餵奶。'); return; }
+    F.active = false; F.stopped = true; F.needBurp = true; F.pats = 0; F.tried = false;
+    F.valid = F.startFood <= 68 && (F.signal || b.food >= 68);
+    var bt = S.bottles.filter(function (x) { return x.st === 'tested' && x.used; })[0];
+    if (bt) { bt.st = 'dirty'; bt.used = false; }
+    S.bottles.forEach(function (x) { if (x.using) { x.st = 'dirty'; x.using = false; } });
+    say(F.signal ? '看到飽足訊號，主動停止餵奶。接下來拍嗝。' : '先停止餵奶（寶寶可能還想吃，之後可再備一瓶）。接下來拍嗝。', 'ok');
+    ev('feed', F.signal ? '看到飽足訊號，主動停止餵奶' : '提前停止餵奶');
+    F.signal = false;
+  },
+  putdown: function () {
+    var b = S.baby, F = S.feed; if (!needVisible()) return;
+    if (S.zone !== 'room') { oerr('putdown', '嬰兒床在房間裡，先回房間。'); return; }
+    if (b.loc !== 'arms') { say(b.loc === 'crib' ? '寶寶已經在床上了。' : '要先把寶寶抱起來才能放回床。', 'warn'); return; }
+    if (!b.steady) { S.d.unsteady++; oerr('unsteadyput', '先托穩，才能安全地放下。'); return; }
+    if (F.active) { oerr('putfeed', '先停止餵奶，再放下寶寶。'); return; }
+    if (S.crib.clutter) { oerr('clutter', '床上有雜物。睡覺的床要平坦、空無一物——先「清空床面」。'); return; }
+    if (F.needBurp && F.tried) { F.needBurp = false; F.tried = false; ev('feed', '有溫柔拍嗝，沒打出嗝也不勉強，輕輕放下寶寶'); }
+    else if (F.needBurp) { F.needBurp = false; S.d.unburped++; S.d.incomplete++; b.mood = Math.max(0, b.mood - 4); ev('order', '餵完沒拍嗝就放下寶寶，肚子脹脹的'); }
+    b.loc = 'crib'; b.steady = false; b.drowse = 0; spend(0.6);
+    say('輕輕把寶寶放回平坦的空床上，仰睡。', 'ok');
+  },
+  clearcrib: function () {
+    if (S.zone !== 'room') { say('嬰兒床在房間裡。'); return; }
+    if (!S.crib.clutter) { say('床面已經是平坦空床。'); return; }
+    S.crib.clutter = false; spend(0.5); say('把床上的東西都拿走了，床面平坦乾淨。', 'ok');
+  },
+  table: function () {
+    var b = S.baby, D = S.diaper, T = S.tray;
+    if (S.zone !== 'room') { oerr('table', '尿布台在房間裡。'); return; }
+    if (!needVisible()) return;
+    if (b.loc === 'table') { say('寶寶已經在尿布台上。'); return; }
+    if (b.loc !== 'arms') { oerr('table', '先把寶寶抱起來、托穩，再放上尿布台。'); return; }
+    if (!b.steady) { S.d.unsteady++; oerr('unsteadytable', '先托穩頭頸再移動寶寶。'); return; }
+    if (moveGate('tablefeed', '放上尿布台')) return;
+    if (!(T.diaper && T.clean && T.towel)) { oerr('prep', '尿布用品要先備好：新尿布、濕巾（或濕方巾）、乾毛巾，放到備物盤。'); return; }
+    if (b.soil < 35) { say('尿布還很乾爽，不用換。', 'info'); return; }
+    leaveBurp('放上尿布台');
+    b.loc = 'table'; b.steady = false; D.step = 1; D.valid = true; D.completed = false; D.washed = false;
+    say('寶寶躺在尿布台上，手一直放在寶寶身上。接著打開尿布。', 'info');
+  },
+  open: function () {
+    var b = S.baby, D = S.diaper;
+    if (b.loc !== 'table' || !babyVisible()) { oerr('open', '要先把寶寶放上尿布台。'); return; }
+    if (D.step >= 2) { say('尿布已經打開了。'); return; }
+    D.step = 2; D.pendingWash = true; S.hands[S.cg] = false; spend(0.6);
+    say('打開尿布了。手髒了，換完要洗手。接著用濕巾或濕方巾清潔。', 'info');
+  },
+  mat: function () {
+    var b = S.baby;
+    if (S.zone !== 'play') { say('遊戲墊在遊戲角。'); return; }
+    if (b.loc === 'mat') { say('寶寶已經在遊戲墊上。'); return; }
+    if (b.loc !== 'arms') { say('先把寶寶抱在手上，再放到遊戲墊。', 'warn'); return; }
+    if (!b.steady) { S.d.unsteady++; oerr('unsteadymat', '先托穩再放下。'); return; }
+    if (moveGate('matfeed', '放到遊戲墊')) return;
+    leaveBurp('放到遊戲墊');
+    b.loc = 'mat'; b.steady = false; spend(0.5); say('寶寶躺在遊戲墊上，你在旁邊陪著。', 'ok');
+  },
+  washhands: function () {
+    var D = S.diaper;
+    if (S.zone !== 'clean') { say('洗手要到清潔區。', 'warn'); return; }
+    if (S.hands[S.cg]) { say('手已經是乾淨的了。'); return; }
+    S.hands[S.cg] = true; spend(0.3);
+    if (D.pendingWash) {
+      D.pendingWash = false;
+      if (D.completed) { D.completed = false; D.washed = true; if (D.valid) { S.d.cycles.diaper++; ev('diaper', '換尿布完成（備物→清潔→擦乾→新尿布→洗手）'); beep(600, 0.15); } }
+    }
+    say('用肥皂把手洗乾淨了。', 'ok');
+  },
+  trash: function () {
+    if (S.zone !== 'clean') { say('垃圾桶在清潔區。', 'warn'); return; }
+    if (S.trash <= 0) { say('沒有需要倒的垃圾。'); return; }
+    S.trash = 0; S.d.chores++; S.hands[S.cg] = false; spend(0.8);
+    say('髒尿布丟進垃圾桶並綁好。手要再洗一次。', 'ok'); ev('chore', '倒掉髒尿布');
+  },
+  handover: function () {
+    var b = S.baby, pa = other(S.cg);
+    if (b.loc === 'partner') { ACT.pickup(); return; }
+    if (!needVisible()) return;
+    if (b.loc !== 'arms') { say('寶寶不在你手上，不需要交接。', 'info'); return; }
+    if (unsteadyArms('unsteadyhandover', '還沒托穩頭頸，先托穩再交接。')) return;
+    if (moveGate('handfeed', '交接')) return;
+    leaveBurp('交接');
+    b.loc = 'partner'; b.steady = true; S.d.handovers++;
+    say('交給' + NAMES[pa] + '抱著了，你可以去做家務或休息。', 'ok'); ev('handover', '交給' + NAMES[pa] + '抱著');
+  },
+  rest: function () {
+    var b = S.baby;
+    if (S.resting) { S.resting = false; say('結束休息。'); return; }
+    if ((b.asleep && b.loc === 'crib') || b.loc === 'partner') { S.resting = true; S.d.rests++; say('喘口氣、喝杯水，體力慢慢恢復。', 'ok'); ev('rest', NAMES[S.cg] + '休息了一下'); }
+    else say('寶寶在床上睡著，或交給伴侶抱著的時候，才能放心休息。', 'info');
+  }
+};
+function act(name) {
+  if (!guard()) return;
+  if (name !== 'rest') S.resting = false;
+  ACT[name](); render();
+}
+function go(z) {
+  if (!guard() || z === S.zone) return;
+  var b = S.baby;
+  if (b.loc === 'table') { oerr('leavetable', '寶寶在尿布台上，不能離開。請先抱起寶寶。'); render(); return; }
+  if (b.loc === 'mat' && z !== 'play') { oerr('leavemat', '寶寶在遊戲墊上，要先抱起來才能離開遊戲角。'); render(); return; }
+  if (b.loc === 'arms' && z === 'clean') { oerr('washbaby', '抱著寶寶不能去洗奶瓶——先放回床，或交給伴侶抱。'); render(); return; }
+  S.zone = z; say({ room: '回到房間。', clean: '來到清潔區。', play: '來到遊戲角。' }[z], 'info'); render();
+}
+
+/* ---------- 物品 ---------- */
+function benchBottle(st) { return S.bottles.filter(function (x) { return x.st === st; })[0]; }
+function useBench(id) {
+  if (S.zone !== 'clean') { say('這個要在清潔區的工作台使用。', 'warn'); return; }
+  var bt;
+  if (id === 'soap') {
+    bt = benchBottle('dirty');
+    if (bt) { bt.st = 'soaped'; spend(0.5); say('奶瓶' + bt.id.toUpperCase() + '抹上肥皂。接著用奶瓶刷。', 'ok'); return; }
+    if (S.cloth.st === 'dirty') { S.cloth.st = 'dry'; spend(0.5); say('小方巾洗乾淨、擰乾了。', 'ok'); return; }
+    say('沒有需要用肥皂洗的東西。'); return;
+  }
+  if (id === 'brush') { bt = benchBottle('soaped'); if (bt) { bt.st = 'scrubbed'; spend(0.5); say('奶瓶' + bt.id.toUpperCase() + '刷洗乾淨。接著用清水沖。', 'ok'); } else say(benchBottle('dirty') ? '要先抹肥皂再刷。' : '沒有等著刷洗的奶瓶。', 'warn'); return; }
+  if (id === 'water') { bt = benchBottle('scrubbed'); if (bt) { bt.st = 'rinsed'; spend(0.4); say('奶瓶' + bt.id.toUpperCase() + '沖乾淨。放到瀝水架。', 'ok'); } else say(benchBottle('soaped') || benchBottle('dirty') ? '要先抹肥皂並刷洗，再沖水。' : '沒有等著沖洗的奶瓶。', 'warn'); return; }
+  if (id === 'rack') { bt = benchBottle('rinsed'); if (bt) { bt.st = 'drying'; bt.t = 6; say('奶瓶' + bt.id.toUpperCase() + '放上瀝水架，瀝乾中……', 'ok'); } else say('沒有沖好的奶瓶可以瀝乾。', 'warn'); return; }
+  if (id === 'milk') {
+    bt = benchBottle('ready');
+    if (bt) { bt.st = 'filled'; spend(0.5); say('奶瓶' + bt.id.toUpperCase() + '裝好奶了。還要手腕試溫。', 'ok'); }
+    else say(S.bottles.some(function (x) { return x.st === 'drying'; }) ? '奶瓶還在瀝乾，等一下。' : '沒有乾淨的奶瓶，先洗奶瓶。', 'warn');
+    return;
+  }
+  if (id === 'wrist') {
+    bt = benchBottle('filled');
+    if (bt) { bt.st = 'tested'; say('滴在手腕內側試溫：溫溫的，剛好。奶瓶' + bt.id.toUpperCase() + '可以餵了。', 'ok'); }
+    else say('要先有裝好奶的奶瓶才能試溫。', 'warn');
+  }
+}
+function useBottle(id, target) {
+  var bt = S.bottles.filter(function (x) { return 'bottle-' + x.id === id; })[0], b = S.baby, F = S.feed, A = AGE[S.day];
+  var nm = '奶瓶' + bt.id.toUpperCase();
+  if (target !== 'baby') { say(nm + '：' + BST[bt.st] + '。', 'info'); return; }
+  if (!needVisible()) return;
+  if (b.asleep) { dist('feedsleep', '寶寶睡著了，先不餵。等他醒來、出現想吃的訊號再餵。'); return; }
+  if (b.loc !== 'arms') { oerr('feedhold', '餵奶要把寶寶抱起來、托穩。'); return; }
+  if (!b.steady) { S.d.unsteady++; oerr('unsteadyfeed', '先托穩頭頸再餵奶。'); return; }
+  if (!S.hands[S.cg]) { oerr('feedhands', '手還沒洗乾淨，先去清潔區洗手。'); return; }
+  if (bt.st !== 'tested') { oerr('feedbottle', nm + '目前是「' + BST[bt.st] + '」，要乾淨、裝奶並試溫過才能餵。'); return; }
+  if (F.needBurp) { oerr('burpfirst', '剛停止餵奶，先拍嗝。'); return; }
+  if (!F.active && F.stopped) { S.feed = F = newFeed(); }
+  if (b.food >= A.full || (F.active && F.signal)) {
+    F.signal = true; S.d.overfeed++; b.mood = Math.max(0, b.mood - 3);
+    ev('feed', '寶寶已經飽了還想繼續餵，寶寶拒絕');
+    say('寶寶轉開頭、緊閉小嘴拒絕了。吃飽了，請按「停止餵奶」。', 'warn'); return;
+  }
+  if (!cdOk('sip', 1.5)) { say('慢一點，讓寶寶吞嚥、換氣。'); return; }
+  if (!F.active) { F.active = true; F.sips = 0; F.startFood = b.food; F.signal = false; bt.used = true; bt.using = true; bt.milk = 100; }
+  b.food = Math.min(100, b.food + A.sip); b.gas = Math.min(100, b.gas + 6); F.sips++; spend(0.4);
+  bt.milk = (bt.milk === undefined ? 100 : bt.milk) - 12;
+  if (b.food >= A.full) { F.signal = true; say('寶寶轉開頭、嘴巴閉起來，不再吸吮——飽足訊號！請按「停止餵奶」。', 'ok'); beep(700, 0.1); }
+  else say('寶寶吸了幾口（第 ' + F.sips + ' 口）。看著寶寶的表情，少量慢慢餵。', 'info');
+}
+function careOnBaby(id) {
+  var b = S.baby, D = S.diaper, T = S.tray;
+  if (b.loc !== 'table' || !babyVisible()) { oerr('care', '先把寶寶放上尿布台、打開尿布，再使用。'); return; }
+  if (id === 'wipes' || id === 'cloth') {
+    if (T.clean !== id) { say('備物盤裡沒有這個，先放到備物盤。', 'warn'); return; }
+    if (D.step < 2) { oerr('clean0', '先打開尿布再清潔。'); return; }
+    if (D.step >= 3) { say('已經清潔過了，接著擦乾。'); return; }
+    D.step = 3; if (id === 'cloth') S.cloth.st = 'dirty'; spend(0.6);
+    say('由前往後輕輕擦乾淨。接著用乾毛巾擦乾。', 'ok'); return;
+  }
+  if (id === 'towel') {
+    if (!T.towel) { say('備物盤裡沒有乾毛巾，先放到備物盤。', 'warn'); return; }
+    if (D.step < 3) { oerr('dry0', D.step < 2 ? '先打開尿布、清潔，再擦乾。' : '先清潔再擦乾。'); return; }
+    if (D.step >= 4) { say('已經擦乾了。'); return; }
+    D.step = 4; spend(0.4); say('輕輕拍乾屁屁。接著包新尿布。', 'ok'); return;
+  }
+  if (id === 'diaper') {
+    if (!T.diaper) { say('備物盤裡沒有新尿布，先放到備物盤。', 'warn'); return; }
+    if (D.step < 4) { oerr('new0', D.step < 3 ? '先清潔、擦乾，再包新尿布。' : '要先擦乾再包新尿布。'); return; }
+    if (D.step >= 5) { say('已經包好新尿布了。'); return; }
+    D.step = 5; D.completed = true; b.soil = 0; b.mood = Math.min(100, b.mood + 5); S.trash++; spend(0.6);
+    S.tray = { diaper: false, clean: null, towel: false };
+    say('新尿布包好了。把寶寶抱起來放回床，再去洗手（手還是髒的）。', 'ok');
+  }
+}
+function useCare(id, target) {
+  var T = S.tray;
+  if (target === 'baby') { careOnBaby(id); return; }
+  if (target === 'crib') { say('這個不用放進嬰兒床。', 'warn'); return; }
+  if (S.zone === 'clean') {
+    if (id === 'cloth') {
+      if (S.cloth.st === 'dry') { S.cloth.st = 'wet'; say('小方巾用清水沾濕了。可以帶回房間放到備物盤。', 'ok'); }
+      else if (S.cloth.st === 'wet') say('小方巾已經是濕的了。');
+      else say('小方巾用過了，要先用肥皂洗乾淨。', 'warn');
+    } else say('這個放在房間的備物盤。', 'info');
+    return;
+  }
+  if (S.zone !== 'room') { say('備物盤在房間裡。', 'warn'); return; }
+  if (id === 'diaper') {
+    if (T.diaper) { say('備物盤已經有新尿布了。'); return; }
+    if (S.stock.diaper <= 0) { say('新尿布用完了！', 'warn'); return; }
+    S.stock.diaper--; T.diaper = true; say('新尿布放到備物盤。', 'ok'); return;
+  }
+  if (id === 'towel') { if (T.towel) { say('備物盤已經有乾毛巾了。'); return; } T.towel = true; say('乾毛巾放到備物盤。', 'ok'); return; }
+  if (id === 'wipes') {
+    if (T.clean) { say('備物盤已經有清潔用品了。'); return; }
+    if (S.stock.wipes <= 0) { say('濕巾用完了！改拿小方巾到清潔區沾濕。', 'warn'); return; }
+    S.stock.wipes--; T.clean = 'wipes'; say('濕巾放到備物盤。', 'ok'); return;
+  }
+  if (id === 'cloth') {
+    if (T.clean) { say('備物盤已經有清潔用品了。'); return; }
+    if (S.cloth.st !== 'wet') { say(S.cloth.st === 'dry' ? '小方巾是乾的，先到清潔區沾濕。' : '小方巾用過了，先去清潔區洗乾淨再沾濕。', 'warn'); return; }
+    T.clean = 'cloth'; say('濕方巾放到備物盤。', 'ok');
+  }
+}
+function useLamp(target) {
+  if (S.zone !== 'room') { say('夜燈在房間裡。', 'warn'); return; }
+  if (target === 'baby') { say('燈不是對寶寶用的，請對工作台使用。', 'warn'); return; }
+  S.lamp = !S.lamp; say(S.lamp ? '把房間燈光調暗了，暖暖的小夜燈。' : '把燈光調亮了。', 'ok');
+}
+function useToy(id, target) {
+  var t = ITEMS[id], b = S.baby, P = S.play;
+  if (target === 'crib') {
+    if (S.zone !== 'room') { say('嬰兒床在房間裡。', 'warn'); return; }
+    S.crib.clutter = true; S.d.clutter++; ev('safety', '把玩具放進嬰兒床：睡覺的床應該平坦、空無一物'); say('玩具放進床裡了……但睡覺的床應該平坦、空無一物。請「清空床面」。', 'warn'); return;
+  }
+  if (target !== 'baby') { say('玩具是陪寶寶玩的，請對寶寶使用。', 'info'); return; }
+  if (!needVisible()) return;
+  if (S.zone !== 'play' || (b.loc !== 'mat' && b.loc !== 'arms')) { say('陪玩要在遊戲角，寶寶在遊戲墊上或在你手上。', 'warn'); return; }
+  if (t.bad) { S.d.unsafe++; ev('safety', t.n + '有' + t.bad + '風險，沒有給寶寶'); say(t.n + '（' + t.bad + '）不適合寶寶，收起來了。', 'warn'); return; }
+  if (S.day < t.min || S.day > t.max) { S.d.mismatch++; ev('play', t.n + '不適合' + AGE[S.day].name); say(t.n + '不適合' + AGE[S.day].name + '（適合 ' + t.min + '–' + t.max + ' 月），換一個吧。', 'warn'); return; }
+  if (b.asleep) { dist('toysleep', '寶寶在睡覺，玩具會打擾睡眠，先收起來。'); return; }
+  if (b.food < 25 || b.soil > 75 || b.rest < 20) { say('寶寶現在不舒服（餓了、尿布濕或太累），沒有心情玩。先照顧好需求。', 'warn'); return; }
+  if (b.loc === 'arms' && !b.steady) { S.d.unsteady++; oerr('unsteadyplay', '先托穩頭頸，再抱著寶寶玩。'); return; }
+  if (b.stim < STIM_COST) { say('寶寶現在不太想玩，讓他休息、看看四周，等他又好奇了再玩。', 'info'); return; }
+  if (!cdOk('play', 3)) { say('讓寶寶看一下、摸一下，慢慢來。'); return; }
+  if (P.last === id) P.streak++; else { P.last = id; P.streak = 1; }
+  if (P.streak > 2) { say('寶寶看膩這個了，換個玩具吧。', 'info'); return; }
+  if (S.now - P.at > 40) P.prog = 0;
+  P.at = S.now; b.stim -= STIM_COST;
+  P.prog++; b.mood = Math.min(100, b.mood + 6); b.rest = Math.max(0, b.rest - 1.5); spend(0.5);
+  if (P.prog >= 3) { P.prog = 0; if (addCycle('play')) { ev('play', '陪寶寶玩了一輪適合月齡的玩具'); beep(660, 0.12); } say('玩得很開心！寶寶咯咯笑。', 'ok'); }
+  else say('寶寶盯著' + t.n + '，伸手想碰（' + P.prog + '/3）。', 'ok');
+}
+function use(id, target) {
+  if (!guard()) return;
+  S.resting = false;
+  if (id.indexOf('bottle') === 0) useBottle(id, target);
+  else if (id.indexOf('toy') === 0) useToy(id, target);
+  else if (id === 'diaper' || id === 'wipes' || id === 'cloth' || id === 'towel') useCare(id, target);
+  else if (id === 'lamp') useLamp(target);
+  else if (target === 'bench' || target === 'baby') { if (target === 'baby') say('這個是工作台上用的。', 'warn'); else useBench(id); }
+  else say('這個是工作台上用的。', 'warn');
+}
+function defTarget(id) {
+  if (id.indexOf('toy') === 0 || id.indexOf('bottle') === 0) return 'baby';
+  if (id === 'diaper' || id === 'wipes' || id === 'cloth' || id === 'towel') return (S.zone === 'room' && S.baby.loc === 'table') ? 'baby' : 'bench';
+  return 'bench';
+}
+function onTarget(t, dropped) {
+  if (!guard()) return;
+  var id = dropped || S.sel;
+  if (!id) { say('先點選一個物品，再選擇要對寶寶／工作台／嬰兒床使用。', 'info'); render(); return; }
+  use(id, t); render();
+}
+function silence() {
+  if (!guard() || !S.phone.ringing) return;
+  S.phone.ringing = false; S.banner = null; ev('phone', '把手機靜音，沒有接——先顧寶寶。'); say('手機靜音了，沒接電話沒關係。', 'ok'); render();
+}
+
+/* ---------- 暫停／設定 ---------- */
+function setPaused(on, why) { if (S.phase !== 'play') return; S.paused = on; S.pauseWhy = on ? why : ''; render(); }
+function openHelp() { S.helpOpen = true; if (S.phase === 'play') { S.paused = true; S.pauseWhy = 'help'; } render(); }
+function closeHelp() { S.helpOpen = false; render(); }
+
+/* ---------- 畫面 ---------- */
+var lastItemsHTML = '', lastSched = '';
+function mix(a, b, t) { var r = [0, 1, 2].map(function (i) { return Math.round(parseInt(a.substr(1 + i * 2, 2), 16) * (1 - t) + parseInt(b.substr(1 + i * 2, 2), 16) * t); }); return '#' + r.map(function (v) { return ('0' + v.toString(16)).slice(-2); }).join(''); }
+function skyColor(t) {
+  var st = [[0, '#ffe8b0'], [0.4, '#bfe3ff'], [0.7, '#ffd9a0'], [1, '#f2a46f']];
+  for (var i = 1; i < st.length; i++) if (t <= st[i][0]) return mix(st[i - 1][1], st[i][1], (t - st[i - 1][0]) / (st[i][0] - st[i - 1][0]));
+  return st[3][1];
+}
+function show(id, on) { var e = $(id); if (e) e.style.display = on ? '' : 'none'; }
+function itemSub(id) {
+  var it = ITEMS[id];
+  if (id.indexOf('bottle') === 0) return BST[S.bottles.filter(function (x) { return 'bottle-' + x.id === id; })[0].st];
+  if (id === 'diaper') return '剩 ' + S.stock.diaper;
+  if (id === 'wipes') return '剩 ' + S.stock.wipes;
+  if (id === 'cloth') return CLST[S.cloth.st];
+  if (id === 'lamp') return S.lamp ? '已調暗' : '明亮';
+  if (id.indexOf('toy') === 0) return it.bad ? ('不適合・' + it.bad) : (it.min + '–' + it.max + '月');
+  return '';
+}
+function chips(list) { return list.map(function (c) { return '<span class="chip' + (c[1] ? ' on' : '') + '">' + (c[1] ? '✓ ' : '○ ') + c[0] + '</span>'; }).join(''); }
+function setNeed(key, label, v, extra) {
+  var row = $('need-row-' + key);
+  if (!row) {
+    row = document.createElement('div'); row.className = 'need'; row.id = 'need-row-' + key;
+    row.innerHTML = '<label></label><div class="track"><i></i></div><b></b>';
+    $('needs').appendChild(row);
+  }
+  var val = Math.round(v);
+  row.setAttribute('data-testid', 'need-' + key); row.setAttribute('data-value', val);
+  row.firstChild.textContent = label;
+  var bar = row.querySelector('i'); bar.style.width = val + '%'; bar.className = val < 30 ? 'low' : (val < 55 ? 'mid' : '');
+  row.querySelector('b').textContent = val;
+}
+function renderItems() {
+  var ids = ZONE_ITEMS[S.zone];
+  var html = ids.map(function (id, i) {
+    var it = ITEMS[id], fit = id.indexOf('toy') === 0 && !it.bad && S.day >= it.min && S.day <= it.max;
+    return '<button class="item' + (S.sel === id ? ' sel' : '') + (fit ? ' fit' : '') + '" draggable="true" data-item="' + id + '" data-testid="item-' + id + '" aria-pressed="' + (S.sel === id) + '"><span class="em">' + it.e + '</span><span class="nm">' + it.n + '</span><small>' + itemSub(id) + '</small><kbd>' + (i + 1) + '</kbd></button>';
+  }).join('');
+  if (html === lastItemsHTML) return;
+  var ae = document.activeElement, fid = ae && ae.getAttribute ? ae.getAttribute('data-testid') : null;
+  lastItemsHTML = html; $('items').innerHTML = html;
+  if (fid && fid.indexOf('item-') === 0) { var n = document.querySelector('[data-testid="' + fid + '"]'); if (n) n.focus(); }
+}
+function bottleColor(st) { return { dirty: '#b08968', soaped: '#e8e6ff', scrubbed: '#d3dcff', rinsed: '#bfe6ff', drying: '#cfeeff', ready: '#ffffff', filled: '#fff3c9', tested: '#ffe9a0' }[st]; }
+function render() {
+  if (!S) return;
+  var b = S.baby, cl = 100 - b.soil, A = AGE[S.day], W = win(S.clock), ex = expr(), vis = babyVisible();
+  $('clk-day').textContent = '第 ' + S.day + ' / ' + MAXDAY + ' 天・' + A.name + '階段';
+  $('clk').textContent = fmtClock(); $('clk-seg').textContent = '（' + (S.cg === 'mom' ? '媽媽' : '爸爸') + '・速度 ' + S.speed + 'x）';
+  $('dayprog').style.width = (S.clock / DAY_LEN * 100) + '%';
+  $('btn-pause').textContent = S.paused ? '▶ 繼續' : '⏸ 暫停';
+  $('btn-speed').textContent = '速度 ' + S.speed + 'x';
+  $('btn-sound').textContent = S.sound ? '🔊 音效：開' : '🔇 音效：關';
+  $('btn-motion').textContent = S.reduce ? '動態：減少' : '動態：開';
+  document.documentElement.classList.toggle('reduce', S.reduce);
+  /* 需求 */
+  setNeed('food', '肚子飽足', b.food); setNeed('clean', '清潔', cl); setNeed('rest', '精神（疲倦）', b.rest); setNeed('mood', '情緒', b.mood); setNeed('play', '想玩（好奇）', b.stim);
+  setNeed('stamina', NAMES[S.cg] + '體力（你）', S.stamina[S.cg]); setNeed('stamina-partner', NAMES[other(S.cg)] + '體力', S.stamina[other(S.cg)]);
+  $('obs').textContent = observe();
+  $('expr').textContent = '寶寶表情：' + EXPR_TXT[ex] + (S.resting ? '　☕ 你正在休息' : '');
+  $('expr').setAttribute('data-expr', ex);
+  /* 流程 */
+  var F = S.feed, D = S.diaper, T = S.tray, anyTested = S.bottles.some(function (x) { return x.st === 'tested'; });
+  $('chk-feed').innerHTML = chips([['洗手', S.hands[S.cg]], ['乾淨奶瓶試溫', anyTested || F.active || F.stopped], ['抱穩', b.loc === 'arms' && b.steady], ['少量餵（' + F.sips + '口）', F.sips > 0], ['飽足訊號', F.signal || (F.stopped && F.sips > 0)], ['主動停止', F.stopped], ['拍嗝', F.burped]]);
+  $('chk-diaper').innerHTML = chips([['備物盤', !!(T.diaper && T.clean && T.towel) || D.step > 0], ['放上尿布台', D.step >= 1], ['開尿布', D.step >= 2], ['清潔', D.step >= 3], ['擦乾', D.step >= 4], ['新尿布', D.step >= 5 || D.completed || D.washed], ['洗手', D.washed]]);
+  $('chk-sleep').innerHTML = chips([['調暗燈光', S.lamp], ['安撫', b.calm >= (b.rest < 25 ? 3 : 2)], ['平坦空床', !S.crib.clutter], ['仰睡放回床', b.loc === 'crib'], ['睡著', b.asleep]]);
+  $('chk-stuff').textContent = '備物盤：' + (T.diaper ? '尿布✓ ' : '尿布✗ ') + (T.clean ? (T.clean === 'wipes' ? '濕巾✓ ' : '濕方巾✓ ') : '濕巾/濕方巾✗ ') + (T.towel ? '毛巾✓' : '毛巾✗') + '　垃圾 ' + S.trash + '　手：' + (S.hands[S.cg] ? '乾淨' : '髒');
+  var sh = WINS.map(function (w, i) { return '<div class="' + (i === W.i ? 'now' : '') + '">' + w[2] + '</div>'; }).join('');
+  if (sh !== lastSched) { lastSched = sh; $('sched').innerHTML = '<h3>今日日程（參考，可自由安排）</h3>' + sh; }
+  /* 區域/物品/動詞 */
+  Array.prototype.forEach.call(document.querySelectorAll('#zones button'), function (e) { var on = e.getAttribute('data-zone') === S.zone; e.classList.toggle('on', on); if (on) e.setAttribute('aria-current', 'true'); else e.removeAttribute('aria-current'); });
+  Array.prototype.forEach.call(document.querySelectorAll('#verbs button'), function (e) { e.hidden = (' ' + e.getAttribute('data-z') + ' ').indexOf(' ' + S.zone + ' ') < 0; });
+  $('targets').querySelector('[data-target="crib"]').hidden = S.zone !== 'room';
+  $('targets').querySelector('[data-target="baby"]').hidden = S.zone === 'clean';
+  $('holding').innerHTML = S.sel ? ('手上拿著：<b>' + ITEMS[S.sel].e + ' ' + ITEMS[S.sel].n + '</b> <button id="clear-sel" data-testid="clear-sel" style="min-height:28px;padding:0 8px">放下</button>') : '手上沒有東西。先點選下方物品。';
+  renderItems();
+  var m = $('msg'); m.textContent = S.msg; m.className = S.msgKind;
+  $('end-day-btn').disabled = S.phase !== 'play' || S.clock < MIN_END;
+  $('end-day-btn').textContent = S.clock < MIN_END ? '🏁 提前收工（今天過 1/3 後可用）' : '🏁 提前收工結算今天';
+  /* 場景 */
+  show('sc-room', S.zone === 'room'); show('room-front', S.zone === 'room'); show('sc-clean', S.zone === 'clean'); show('sc-play', S.zone === 'play');
+  $('sky').setAttribute('fill', skyColor(S.clock / DAY_LEN)); $('sun').setAttribute('cx', 600 + 90 * (S.clock / DAY_LEN)); $('sun').setAttribute('cy', 130 - 60 * Math.sin(Math.PI * S.clock / DAY_LEN));
+  $('lampglow').setAttribute('opacity', S.lamp ? 1 : 0);
+  $('dim').setAttribute('opacity', (S.zone === 'room' && S.lamp) ? 0.38 : 0);
+  show('crib-clutter', S.crib.clutter); show('phone-waves', S.phone.ringing);
+  $('tray-txt').textContent = (T.diaper ? '🩲' : '') + (T.clean ? (T.clean === 'wipes' ? '🧻' : '🧽') : '') + (T.towel ? '🧣' : '');
+  $('trash-txt').textContent = S.trash ? ('×' + S.trash) : '';
+  ['a', 'b'].forEach(function (k) {
+    var bt = S.bottles.filter(function (x) { return x.id === k; })[0], body = $('bot-' + k + '-body');
+    body.setAttribute('fill', bottleColor(bt.st)); body.setAttribute('stroke-dasharray', bt.st === 'drying' ? '5 3' : '0');
+    $('bot-' + k + '-txt').textContent = k.toUpperCase() + '：' + BST[bt.st];
+  });
+  /* 寶寶 */
+  var bb = $('baby'); bb.style.display = vis ? '' : 'none'; $('hands').style.display = (vis && (b.loc === 'arms' || b.loc === 'partner')) ? '' : 'none';
+  var pos = { crib: [205, 200, 0.9], table: [615, 178, 0.9], arms: [400, 190, 1], partner: [400, 190, 1], mat: [400, 240, 0.9] }[b.loc];
+  var tr = 'translate(' + pos[0] + ' ' + pos[1] + ') scale(' + pos[2] + ')';
+  bb.setAttribute('transform', tr); $('hands').setAttribute('transform', tr);
+  var sl = b.loc === 'partner' ? (S.cg === 'mom' ? '#6fa6d6' : '#e58fb0') : (S.cg === 'mom' ? '#e58fb0' : '#6fa6d6');
+  $('sleeve-l').setAttribute('fill', sl); $('sleeve-r').setAttribute('fill', sl);
+  bb.setAttribute('data-expr', ex); bb.setAttribute('data-loc', b.loc);
+  show('eyes-open', ex === 'happy' || ex === 'calm' || ex === 'sated' || ex === 'fuss'); show('eyes-closed', ex === 'sleep'); show('eyes-cry', ex === 'cry');
+  show('brows', ex === 'fuss' || ex === 'cry'); show('tears', ex === 'cry'); show('zzz', ex === 'sleep');
+  show('m-smile', ex === 'happy' || ex === 'calm'); show('m-o', ex === 'sleep'); show('m-cry', ex === 'cry'); show('m-flat', ex === 'fuss'); show('m-sated', ex === 'sated');
+  $('face').setAttribute('transform', ex === 'sated' ? 'translate(-9 0)' : '');
+  var mon = $('monitor');
+  if (!vis && S.phase === 'play') { mon.hidden = false; mon.textContent = '📟 寶寶監視器：' + EXPR_EM[ex] + ' ' + ({ crib: '在嬰兒床', table: '在尿布台', mat: '在遊戲墊', partner: '在' + NAMES[other(S.cg)] + '手上', arms: '在手上' }[b.loc]) + (ex === 'cry' ? '（聽到哭聲）' : ''); }
+  else mon.hidden = true;
+  var bn = $('banner'); if (S.banner && S.phase === 'play') { bn.hidden = false; $('banner-txt').textContent = S.banner.text; $('phone-silence').hidden = !S.phone.ringing; bn.setAttribute('data-kind', S.banner.kind); } else bn.hidden = true;
+  /* 覆蓋層 */
+  $('ov-title').hidden = S.phase !== 'title';
+  $('ov-pause').hidden = !(S.paused && S.phase === 'play' && !S.helpOpen);
+  $('pause-why').textContent = S.pauseWhy === 'hidden' ? '你離開了頁面，時間已停止；回來後按「繼續」，不會補算離開的時間。' : '時間已停止，恢復時不會補算。';
+  $('ov-help').hidden = !S.helpOpen;
+  $('ov-day').hidden = S.phase !== 'daysum'; $('ov-final').hidden = S.phase !== 'final';
+  if (S.phase === 'daysum') renderDay(); else if (S.phase === 'final') renderFinal();
+}
+var lastDayKey = '', lastFinalKey = '';
+function scoreRow(l, v) { return '<div class="sc"><label>' + l + '</label><div class="track"><i style="width:' + v + '%"></i></div><b>' + v + '</b></div>'; }
+function renderDay() {
+  var h = S.history[S.history.length - 1], key = 'd' + h.day; if (key === lastDayKey && $('day-panel').innerHTML) return; lastDayKey = key;
+  var sc = h.scores, tips = { safety: '安全：抱穩、平坦空床、不給小零件玩具。', resp: '回應：觀察飢餓、尿布、疲倦與飽足訊號再行動。', order: '順序：備物→清潔→擦乾→新尿布→洗手；餵奶要停止並拍嗝。', rest: '休息：記得交接、讓自己喘口氣。' };
+  var weakest = ['safety', 'resp', 'order', 'rest'].sort(function (a, c) { return sc[a] - sc[c]; })[0];
+  var cyc = Object.keys(TARGET).map(function (k) { return '<li>' + CYC_NAME[k] + '：' + h.cycles[k] + '（約 ' + TARGET[k] + ' 次為宜）</li>'; }).join('');
+  var evs = h.events.length ? h.events.slice(0, 16).map(function (e) { return '<li>' + (7 + Math.floor(e.t / 15)) + ':' + ('0' + Math.floor((e.t % 15) * 4)).slice(-2) + ' ' + e.text + '</li>'; }).join('') : '<li>今天很平靜。</li>';
+  $('day-panel').innerHTML = '<h2>第 ' + h.day + ' 天結算（' + AGE[h.day].name + '階段）' + (h.early ? '・提前收工' : '') + '</h2>' +
+    scoreRow('安全', sc.safety) + scoreRow('回應', sc.resp) + scoreRow('順序', sc.order) + scoreRow('休息', sc.rest) +
+    '<p><b data-testid="day-total">今日綜合：' + sc.total + '</b>　交接 ' + h.handovers + ' 次・休息 ' + h.rests + ' 次・家務 ' + h.chores + ' 件</p>' +
+    '<ul>' + cyc + '</ul><h3>事件回顧</h3><ul data-testid="day-events">' + evs + '</ul><p>下次可以留意——' + tips[weakest] + '</p>' +
+    '<div class="row"><button id="next-day-btn" data-testid="next-day-btn">' + (h.day >= MAXDAY ? '看最終評等' : '進入第 ' + (h.day + 1) + ' 天（' + AGE[h.day + 1].name + '）') + '</button></div>';
+}
+function renderFinal() {
+  var r = S.final, key = 'f' + r.avg + S.history.length; if (key === lastFinalKey && $('final-panel').innerHTML) return; lastFinalKey = key;
+  var rows = S.history.map(function (h) { return '<tr><td>第' + h.day + '天</td><td>' + h.scores.safety + '</td><td>' + h.scores.resp + '</td><td>' + h.scores.order + '</td><td>' + h.scores.rest + '</td><td><b>' + h.scores.total + '</b></td></tr>'; }).join('');
+  $('final-panel').innerHTML = '<h2>四天結束了 🎉</h2><p style="font-size:1.3em"><b data-testid="final-rating">' + r.grade + '　' + r.title + '</b>（平均 ' + r.avg + '）</p><p>' + r.text + '</p>' +
+    '<table><tr><th></th><th>安全</th><th>回應</th><th>順序</th><th>休息</th><th>綜合</th></tr>' + rows + '</table>' +
+    '<p style="font-size:.85em">這只是遊戲裡的簡化練習，不代表真實育兒能力，也不是醫療建議。</p>' +
+    '<div class="row"><button id="replay-btn" data-testid="replay-btn">🔄 重新開始（完全清空）</button></div>';
+}
+
+/* ---------- 事件綁定 ---------- */
+function bind() {
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('button,[data-target]') : null; if (!t) return;
+    if (t.hasAttribute('data-start')) { if (S.phase !== 'title') return; S.cg = t.getAttribute('data-start'); S.phase = 'play'; say('第 1 天開始了。先看看寶寶需要什麼。', 'info'); ev('day', '第 1 天開始（' + NAMES[S.cg] + '）'); render(); return; }
+    if (t.id === 'btn-pause') { if (S.phase !== 'play' || S.helpOpen) return; setPaused(!S.paused, 'manual'); return; }
+    if (t.id === 'resume-btn') { if (S.phase !== 'play' || S.helpOpen) return; setPaused(false, ''); return; }
+    if (t.id === 'btn-speed') { S.speed = S.speed === 1 ? 2 : 1; render(); return; }
+    if (t.id === 'btn-sound') { S.sound = !S.sound; if (S.sound) beep(660, 0.1); render(); return; }
+    if (t.id === 'btn-motion') { S.reduce = !S.reduce; render(); return; }
+    if (t.id === 'btn-help') { openHelp(); return; }
+    if (t.id === 'help-close') { closeHelp(); return; }
+    if (t.id === 'phone-silence') { silence(); return; }
+    if (t.id === 'end-day-btn') { if (guard() && S.clock >= MIN_END) finishDay(true); return; }
+    if (t.id === 'next-day-btn') { nextDay(); return; }
+    if (t.id === 'replay-btn') { lastDayKey = ''; lastFinalKey = ''; lastItemsHTML = ''; resetAll(); render(); return; }
+    if (t.id === 'clear-sel') { if (guard()) { S.sel = null; render(); } return; }
+    if (t.id === 'use-btn') { if (!guard()) return; if (!S.sel) { say('先點選一個物品。', 'info'); render(); return; } use(S.sel, defTarget(S.sel)); render(); return; }
+    if (t.hasAttribute('data-zone')) { go(t.getAttribute('data-zone')); return; }
+    if (t.hasAttribute('data-item')) { if (!guard()) return; var id = t.getAttribute('data-item'); S.sel = S.sel === id ? null : id; say(S.sel ? ITEMS[id].n + ' 拿在手上了。接著點「對寶寶／工作台／嬰兒床使用」。' : '放下了。', 'info'); render(); return; }
+    if (t.hasAttribute('data-act')) { act(t.getAttribute('data-act')); return; }
+    if (t.hasAttribute('data-target')) { onTarget(t.getAttribute('data-target')); return; }
+  });
+  document.addEventListener('dragstart', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-item]') : null; if (!t || !guard()) return;
+    var id = t.getAttribute('data-item'); try { e.dataTransfer.setData('text/plain', id); } catch (x) { /* 略 */ }
+    S.sel = id;
+  });
+  document.addEventListener('dragover', function (e) { if (e.target.closest && e.target.closest('[data-target]')) e.preventDefault(); });
+  document.addEventListener('drop', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-target]') : null; if (!t) return; e.preventDefault();
+    var id = ''; try { id = e.dataTransfer.getData('text/plain'); } catch (x) { id = ''; }
+    onTarget(t.getAttribute('data-target'), id || S.sel);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var k = e.key;
+    if (k === 'Enter' && e.target && e.target.getAttribute && e.target.getAttribute('data-target') && e.target.tagName !== 'BUTTON') { onTarget(e.target.getAttribute('data-target')); e.preventDefault(); return; }
+    if (S.phase !== 'play') return;
+    var lk = k.toLowerCase();
+    if (lk === 'p') { if (S.helpOpen) return; setPaused(!S.paused, 'manual'); return; }
+    if (!guard()) return;
+    if (lk === 'z') go('room'); else if (lk === 'x') go('clean'); else if (lk === 'c') go('play');
+    else if (lk === 'b') onTarget('baby'); else if (lk === 't') onTarget('bench'); else if (lk === 'k') onTarget('crib');
+    else if (/^[1-9]$/.test(k)) { var id = ZONE_ITEMS[S.zone][+k - 1]; if (id) { S.sel = S.sel === id ? null : id; render(); } }
+    else if (k === 'Enter' && e.target && e.target.tagName !== 'BUTTON' && S.sel) { use(S.sel, defTarget(S.sel)); render(); }
+  });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) setPaused(true, 'hidden'); });
+  window.addEventListener('pagehide', function () { setPaused(true, 'hidden'); });
+}
+
+/* ---------- 主迴圈 ---------- */
+var lastTick = performance.now();
+function tick() {
+  var now = performance.now(), dt = (now - lastTick) / 1000; lastTick = now;
+  if (MANUAL || document.hidden) return;
+  if (S.phase !== 'play' || S.paused) return;
+  if (dt > 0.35) dt = 0.1;
+  advance(dt * S.speed);
+}
+
+/* ---------- 啟動 ---------- */
+resetAll(); bind(); render();
+setInterval(tick, 100);
+var api = { version: 1, getState: function () {
+  var o = JSON.parse(JSON.stringify(S)); var b = S.baby;
+  o.needs = { food: b.food, clean: 100 - b.soil, rest: b.rest, mood: b.mood, stamina: S.stamina[S.cg] };
+  o.score = scoreNow(); o.expr = expr(); o.time = fmtClock(); o.testMode = TEST; o.dayLen = DAY_LEN; return o;
+} };
+if (TEST) api.advance = advance;
+window.NURSERY = Object.freeze(api);
+})();
+</script>
+</body>
+</html>
