@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>寶寶養成日誌・育嬰房</title>
 <style>
 *{box-sizing:border-box}
@@ -81,6 +81,67 @@ footer{font-size:.78em;color:#7a5a43;margin:8px 0}
 @keyframes ring{0%,100%{opacity:1}50%{opacity:.3}}
 .reduce *{animation:none!important;transition:none!important}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- 手機優先版面：場景 + 操作托盤 ---- */
+html{-webkit-text-size-adjust:100%}
+body{-webkit-tap-highlight-color:transparent}
+#app{max-width:640px;padding:6px 8px calc(10px + env(safe-area-inset-bottom))}
+button{touch-action:manipulation}
+.main{display:block}
+.topbar .ctrl{flex-wrap:nowrap}
+.topbar .ctrl button{min-height:38px;padding:4px 10px}
+.clockbox{font-size:.95em}
+.mini{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:2px 0 6px}
+.mn{display:flex;align-items:center;gap:3px;background:#fffaf2;border:2px solid #ecd3b0;border-radius:10px;padding:2px 4px;font-size:.78em;min-width:0}
+.mn .tr{flex:1;height:6px;background:#f1e0c8;border-radius:4px;overflow:hidden;min-width:0}
+.mn .tr i{display:block;height:100%;width:0;background:#6dbf7b}
+.mn .tr i.mid{background:#f0b44c}
+.mn .tr i.low{background:#e4766a}
+.mn em{font-style:normal;min-width:1.7em;text-align:right}
+#monitor{bottom:48px}
+/* 區域鈕疊在場景左下角：nav 本身不接指標（按鈕間隙、圓角外側不會擋住下面的落點），只有按鈕可點 */
+.zonepick{position:absolute;left:6px;bottom:6px;display:flex;gap:4px;z-index:3;pointer-events:none}
+.zonepick button{min-height:36px;padding:2px 9px;border-radius:18px;font-size:.82em;background:rgba(255,250,242,.94);pointer-events:auto}
+.zonepick button.on{background:#ffd98f;border-color:#d58a1f;font-weight:700}
+/* 窄螢幕：工作台落點左緣約在場景寬 61% 處，360px 時原本三顆區域鈕右緣會壓到它 1～2px（elementFromPoint 命中 #zones），縮小左右內距讓按鈕留在工作台左側 */
+@media(max-width:420px){.zonepick{gap:3px}.zonepick button{padding:2px 5px}}
+#msg{margin:6px 0;padding:6px 10px;min-height:38px;font-size:.9em}
+.obsmini{margin:4px 0 0;font-size:.82em;color:#7a5a43;min-height:1.3em}
+.tasks{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:6px 0}
+.tasks button{min-height:46px;padding:2px 0;font-size:.74em;line-height:1.15;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.tasks button.on{background:#ffd98f;border-color:#d58a1f;font-weight:700}
+.tasks .em{font-size:1.5em}
+.tray{background:#fffaf2;border:2px solid #ecd3b0;border-radius:14px;padding:8px;margin:6px 0}
+.hintline{margin:0 0 6px;font-weight:700;font-size:.9em;min-height:1.3em}
+.tray-body{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;min-height:56px}
+.tray-item{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:84px;min-height:68px;padding:4px 8px;line-height:1.2;background:#fff;border-color:#7fa9d6;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:grab}
+.tray-item .em{font-size:1.7em}
+.tray-item small{font-size:.7em;color:#7a5a43}
+.tray-item.lifting{opacity:.35}
+.tact{min-height:48px;padding:6px 12px;font-weight:700}
+.tray .next{border-color:#e0a100;box-shadow:0 0 0 3px rgba(255,211,77,.7)}
+.tray.hint-on .next{animation:pulse .8s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(255,211,77,.95)}}
+.tut{background:#eef7ff;border:2px solid #7fa9d6;border-radius:12px;padding:8px 10px;margin-bottom:8px}
+.tut-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tut p{margin:6px 0;font-weight:700}
+#tut-fb{font-weight:400;font-size:.88em;min-height:1.3em;color:#7a3b2b}
+#tut-done{width:100%;background:#ffd98f;border-color:#d58a1f;font-weight:700;min-height:48px}
+details.fold{background:#fffaf2;border:2px solid #ecd3b0;border-radius:14px;padding:2px 10px 6px;margin:8px 0}
+details.fold>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:700;color:#8a5a2b}
+.advrow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.right .card:last-child{margin-bottom:0}
+.hit[data-target].legal{fill:rgba(255,211,77,.35);stroke:#e0a100;stroke-width:5;stroke-dasharray:12 7}
+.hit[data-target].hover{fill:rgba(255,211,77,.65)}
+.hit[data-target].bad{fill:rgba(228,118,106,.3);stroke:#e4766a;stroke-width:4}
+#baby-ring{display:none;fill:rgba(255,211,77,.28);stroke:#e0a100;stroke-width:4;stroke-dasharray:9 6;pointer-events:none}
+#baby.legal #baby-ring,#baby.glow #baby-ring{display:block}
+#baby.hover #baby-ring{fill:rgba(255,211,77,.6)}
+#baby.bad #baby-ring{display:block;fill:rgba(228,118,106,.3);stroke:#e4766a}
+#baby.glow #baby-ring{animation:ringp 1s ease-in-out infinite}
+@keyframes ringp{50%{stroke-width:9}}
+#ghost{position:fixed;left:0;top:0;z-index:60;pointer-events:none;font-size:2.4em;line-height:1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));will-change:transform}
+body.is-dragging{cursor:grabbing;-webkit-user-select:none;user-select:none}
 </style>
 </head>
 <body>
@@ -89,13 +150,18 @@ footer{font-size:.78em;color:#7a5a43;margin:8px 0}
   <div class="clockbox"><b id="clk-day" data-testid="clock-day"></b><span id="clk" data-testid="clock"></span><span id="clk-seg"></span></div>
   <div class="ctrl">
     <button id="btn-pause" data-testid="btn-pause">⏸ 暫停</button>
-    <button id="btn-speed" data-testid="btn-speed">速度 1x</button>
-    <button id="btn-sound" data-testid="btn-sound">🔇 音效：關</button>
-    <button id="btn-motion" data-testid="btn-motion">動態：開</button>
-    <button id="btn-help" data-testid="btn-help" class="help">🛑 停止／健康求助</button>
+    <button id="btn-hint" data-testid="btn-hint">💡 提示</button>
+    <button id="btn-help" data-testid="btn-help" class="help" aria-label="停止並開啟健康求助">🛑 求助</button>
   </div>
 </header>
 <div class="dayprog"><i id="dayprog"></i></div>
+<div class="mini" id="mini" data-testid="mini-needs">
+  <div class="mn" id="mini-food" data-testid="mini-food" role="img"><span aria-hidden="true">🍼</span><span class="tr"><i></i></span><em></em></div>
+  <div class="mn" id="mini-clean" data-testid="mini-clean" role="img"><span aria-hidden="true">🧷</span><span class="tr"><i></i></span><em></em></div>
+  <div class="mn" id="mini-rest" data-testid="mini-rest" role="img"><span aria-hidden="true">😴</span><span class="tr"><i></i></span><em></em></div>
+  <div class="mn" id="mini-mood" data-testid="mini-mood" role="img"><span aria-hidden="true">🙂</span><span class="tr"><i></i></span><em></em></div>
+  <div class="mn" id="mini-stamina" data-testid="mini-stamina" role="img"><span aria-hidden="true">💪</span><span class="tr"><i></i></span><em></em></div>
+</div>
 
 <div class="main">
 <section class="left">
@@ -127,8 +193,9 @@ footer{font-size:.78em;color:#7a5a43;margin:8px 0}
   <g id="shelf"><rect x="365" y="215" width="120" height="10" rx="3" fill="#b98450"/><rect x="375" y="190" width="36" height="25" rx="5" fill="#9fd5c9"/>
     <g id="phone-g"><rect x="440" y="180" width="26" height="35" rx="5" fill="#3a3a44"/><rect x="443" y="184" width="20" height="24" rx="2" fill="#8fd0ff"/><g id="phone-waves" style="display:none" stroke="#e0662a" stroke-width="3" fill="none"><path d="M432 188 Q426 197 432 206"/><path d="M472 188 Q478 197 472 206"/></g></g></g>
   <g id="lamp"><line x1="425" y1="0" x2="425" y2="62" stroke="#8a5a2b" stroke-width="3"/><path d="M398 100 L452 100 L440 62 L410 62Z" fill="#ffd27a" stroke="#d9a83f" stroke-width="2"/><circle id="lampglow" cx="425" cy="104" r="95" fill="url(#lampg)"/></g>
-  <rect id="hit-crib" data-target="crib" data-testid="hit-crib" x="60" y="140" width="290" height="190" fill="transparent"/>
-  <rect id="hit-bench" data-target="bench" data-testid="hit-bench" x="490" y="250" width="250" height="120" fill="transparent"/>
+  <!-- 床／備物盤落點：外框固定，寶寶在場景上時用 evenodd 挖掉寶寶的落點（見 cutHits），兩者不重疊 -->
+  <path id="hit-crib" class="hit" data-target="crib" data-testid="hit-crib" d="M60 140h290v190h-290Z" fill="transparent" fill-rule="evenodd"/>
+  <path id="hit-bench" class="hit" data-target="bench" data-testid="hit-bench" d="M490 250h250v120h-250Z" fill="transparent" fill-rule="evenodd"/>
 </g>
 
 <!-- 清潔區 -->
@@ -145,7 +212,7 @@ footer{font-size:.78em;color:#7a5a43;margin:8px 0}
   <g id="bot-a"><rect id="bot-a-body" x="542" y="236" width="30" height="62" rx="8" fill="#fff" stroke="#8a6d52" stroke-width="3"/><rect x="548" y="222" width="18" height="16" rx="6" fill="#ffd9a8" stroke="#8a6d52" stroke-width="2"/><text id="bot-a-txt" x="530" y="215" font-size="14" fill="#4a3426">A</text></g>
   <g id="bot-b"><rect id="bot-b-body" x="640" y="236" width="30" height="62" rx="8" fill="#fff" stroke="#8a6d52" stroke-width="3"/><rect x="646" y="222" width="18" height="16" rx="6" fill="#ffd9a8" stroke="#8a6d52" stroke-width="2"/><text id="bot-b-txt" x="628" y="215" font-size="14" fill="#4a3426">B</text></g>
   <text x="20" y="40" font-size="20" fill="#5d8a90">清潔區：洗手、洗奶瓶、備奶、倒垃圾</text>
-  <rect id="hit-bench2" data-target="bench" data-testid="hit-bench2" x="0" y="200" width="800" height="240" fill="transparent"/>
+  <rect id="hit-bench2" class="hit" data-target="bench" data-testid="hit-bench2" x="0" y="200" width="800" height="240" fill="transparent"/>
 </g>
 
 <!-- 遊戲角 -->
@@ -160,12 +227,14 @@ footer{font-size:.78em;color:#7a5a43;margin:8px 0}
 </g>
 
 <!-- 寶寶 -->
-<g id="hands" style="display:none">
+<g id="hands" style="display:none" pointer-events="none">
   <rect id="sleeve-l" x="-62" y="100" width="46" height="60" rx="14" fill="#e58fb0"/><rect id="sleeve-r" x="16" y="100" width="46" height="60" rx="14" fill="#e58fb0"/>
   <ellipse cx="-34" cy="108" rx="20" ry="13" fill="#ffd2b0"/><ellipse cx="34" cy="108" rx="20" ry="13" fill="#ffd2b0"/>
 </g>
 <g id="baby" data-target="baby" data-testid="baby" data-expr="calm" tabindex="0" role="button" aria-label="寶寶">
-  <rect x="-70" y="-50" width="140" height="190" fill="transparent"/>
+  <!-- 透明落點：190×195 SVG 單位，手機 360px（場景約 0.42 倍、寶寶 0.9 倍）約 72×74 CSS px，確保 ≥ 60×60；下緣留空避開左下角區域鈕 -->
+  <rect id="baby-hit" x="-95" y="-60" width="190" height="195" fill="transparent"/>
+  <ellipse id="baby-ring" cx="0" cy="38" rx="88" ry="94"/>
   <g id="baby-bob">
     <ellipse cx="0" cy="72" rx="34" ry="42" fill="#ffc8d8"/>
     <g id="arm-l"><ellipse cx="-36" cy="62" rx="10" ry="22" fill="#ffc8d8" transform="rotate(20 -36 62)"/><circle cx="-43" cy="83" r="9" fill="#ffe2c6"/></g>
@@ -190,48 +259,78 @@ footer{font-size:.78em;color:#7a5a43;margin:8px 0}
     <text id="zzz" x="36" y="-30" font-size="22" style="display:none">💤</text>
   </g>
 </g>
-<g id="room-front"><rect x="70" y="298" width="270" height="36" rx="8" fill="#c28a52"/><rect x="70" y="298" width="270" height="6" fill="#a9753f"/></g>
+<g id="room-front" pointer-events="none"><rect x="70" y="298" width="270" height="36" rx="8" fill="#c28a52"/><rect x="70" y="298" width="270" height="6" fill="#a9753f"/></g>
 <rect id="dim" width="800" height="440" fill="#1a1a4a" opacity="0" pointer-events="none"/>
 </svg>
     <div id="monitor" data-testid="monitor" hidden></div>
     <div id="banner" data-testid="event-banner" hidden><span id="banner-txt"></span><button id="phone-silence" data-testid="phone-silence" hidden>🔕 靜音（不接）</button></div>
+    <nav class="zonepick" id="zones" aria-label="區域">
+      <button data-zone="room" data-testid="zone-room" aria-label="房間（Z）">🛏 房間</button>
+      <button data-zone="clean" data-testid="zone-clean" aria-label="清潔區（X）">🚰 清潔</button>
+      <button data-zone="play" data-testid="zone-play" aria-label="遊戲角（C）">🧸 遊戲</button>
+    </nav>
   </div>
-
-  <nav class="bar zones" id="zones" aria-label="區域">
-    <button data-zone="room" data-testid="zone-room">🛏 房間 <small>(Z)</small></button>
-    <button data-zone="clean" data-testid="zone-clean">🚰 清潔區 <small>(X)</small></button>
-    <button data-zone="play" data-testid="zone-play">🧸 遊戲角 <small>(C)</small></button>
-  </nav>
-  <div id="holding" data-testid="holding"></div>
-  <div class="bar" id="items" data-testid="itembar" aria-label="物品列"></div>
-  <div class="bar targets" id="targets">
-    <button data-target="baby" data-testid="target-baby">對寶寶使用 <small>(B)</small></button>
-    <button data-target="bench" data-testid="target-bench">對工作台使用 <small>(T)</small></button>
-    <button data-target="crib" data-testid="target-crib">對嬰兒床使用 <small>(K)</small></button>
-    <button id="use-btn" data-testid="use-btn">使用 <small>(Enter)</small></button>
-  </div>
-  <div class="bar verbs" id="verbs" aria-label="動作">
-    <button data-act="pickup" data-testid="act-pickup" data-z="room play clean">🤱 抱起</button>
-    <button data-act="steady" data-testid="act-steady" data-z="room play clean">🫶 托穩頭頸</button>
-    <button data-act="hug" data-testid="act-hug" data-z="room play clean">🤗 抱抱</button>
-    <button data-act="burp" data-testid="act-burp" data-z="room play clean">👋 拍嗝</button>
-    <button data-act="soothe" data-testid="act-soothe" data-z="room play clean">🎶 輕拍安撫</button>
-    <button data-act="feedstop" data-testid="act-feed-stop" data-z="room play clean">✋ 停止餵奶</button>
-    <button data-act="putdown" data-testid="act-putdown" data-z="room">🛏 放回床（仰睡）</button>
-    <button data-act="clearcrib" data-testid="act-clearcrib" data-z="room">🧹 清空床面</button>
-    <button data-act="table" data-testid="act-table" data-z="room">🪑 放上尿布台</button>
-    <button data-act="open" data-testid="act-open" data-z="room">🩲 開尿布</button>
-    <button data-act="mat" data-testid="act-mat" data-z="play">🟠 放遊戲墊</button>
-    <button data-act="washhands" data-testid="act-washhands" data-z="clean">🧼 洗手</button>
-    <button data-act="trash" data-testid="act-trash" data-z="clean">🗑 倒垃圾</button>
-    <button data-act="handover" data-testid="act-handover" data-z="room play clean">🤝 交接／接回</button>
-    <button data-act="rest" data-testid="act-rest" data-z="room play clean">☕ 休息</button>
-  </div>
+  <p class="obsmini" id="obs-mini" data-testid="obs-mini"></p>
   <p id="msg" role="status" aria-live="polite" data-testid="msg"></p>
-  <button id="end-day-btn" data-testid="end-day-btn">🏁 提前收工結算今天</button>
+
+  <nav class="tasks" id="tasks" data-testid="tasks" aria-label="照顧項目">
+    <button data-task="diaper" data-testid="task-diaper"><span class="em" aria-hidden="true">🩲</span>換尿布</button>
+    <button data-task="feed" data-testid="task-feed"><span class="em" aria-hidden="true">🍼</span>餵奶</button>
+    <button data-task="sleep" data-testid="task-sleep"><span class="em" aria-hidden="true">😴</span>哄睡</button>
+    <button data-task="play" data-testid="task-play"><span class="em" aria-hidden="true">🧸</span>陪玩</button>
+    <button data-task="hug" data-testid="task-hug"><span class="em" aria-hidden="true">🤗</span>抱抱</button>
+    <button data-task="rest" data-testid="task-rest"><span class="em" aria-hidden="true">☕</span>休息</button>
+  </nav>
+
+  <section class="tray" id="tray" data-testid="tray" aria-label="操作托盤">
+    <div class="tut" id="tut" data-testid="tutorial" hidden>
+      <div class="tut-top"><b id="tut-step" data-testid="tut-step"></b><button id="tut-skip" data-testid="tut-skip">略過教學</button></div>
+      <p id="tut-text" data-testid="tut-text"></p>
+      <div id="tut-fb" data-testid="tut-fb" role="status" aria-live="polite"></div>
+      <button id="tut-done" data-testid="tut-done" hidden>開始照顧寶寶 ▶</button>
+    </div>
+    <p class="hintline" id="tray-hint" data-testid="tray-hint"></p>
+    <div class="tray-body" id="tray-body" data-testid="tray-body"></div>
+  </section>
+
+  <details class="fold" id="adv" data-testid="adv">
+    <summary>⚙ 進階操作與設定</summary>
+    <div class="advrow">
+      <button id="btn-speed" data-testid="btn-speed">速度 1x</button>
+      <button id="btn-sound" data-testid="btn-sound">🔇 音效：關</button>
+      <button id="btn-motion" data-testid="btn-motion">動態：開</button>
+      <button id="btn-tutorial" data-testid="btn-tutorial">🎓 重看教學</button>
+    </div>
+    <div id="holding" data-testid="holding"></div>
+    <div class="bar" id="items" data-testid="itembar" aria-label="物品列"></div>
+    <div class="bar targets" id="targets">
+      <button data-target="baby" data-testid="target-baby">對寶寶使用 <small>(B)</small></button>
+      <button data-target="bench" data-testid="target-bench">對工作台使用 <small>(T)</small></button>
+      <button data-target="crib" data-testid="target-crib">對嬰兒床使用 <small>(K)</small></button>
+      <button id="use-btn" data-testid="use-btn">使用 <small>(Enter)</small></button>
+    </div>
+    <div class="bar verbs" id="verbs" aria-label="動作">
+      <button data-act="pickup" data-testid="act-pickup" data-z="room play clean">🤱 抱起</button>
+      <button data-act="steady" data-testid="act-steady" data-z="room play clean">🫶 托穩頭頸</button>
+      <button data-act="hug" data-testid="act-hug" data-z="room play clean">🤗 抱抱</button>
+      <button data-act="burp" data-testid="act-burp" data-z="room play clean">👋 拍嗝</button>
+      <button data-act="soothe" data-testid="act-soothe" data-z="room play clean">🎶 輕拍安撫</button>
+      <button data-act="feedstop" data-testid="act-feed-stop" data-z="room play clean">✋ 停止餵奶</button>
+      <button data-act="putdown" data-testid="act-putdown" data-z="room">🛏 放回床（仰睡）</button>
+      <button data-act="clearcrib" data-testid="act-clearcrib" data-z="room">🧹 清空床面</button>
+      <button data-act="table" data-testid="act-table" data-z="room">🪑 放上尿布台</button>
+      <button data-act="open" data-testid="act-open" data-z="room">🩲 開尿布</button>
+      <button data-act="mat" data-testid="act-mat" data-z="play">🟠 放遊戲墊</button>
+      <button data-act="washhands" data-testid="act-washhands" data-z="clean">🧼 洗手</button>
+      <button data-act="trash" data-testid="act-trash" data-z="clean">🗑 倒垃圾</button>
+      <button data-act="handover" data-testid="act-handover" data-z="room play clean">🤝 交接／接回</button>
+      <button data-act="rest" data-testid="act-rest" data-z="room play clean">☕ 休息</button>
+    </div>
+    <button id="end-day-btn" data-testid="end-day-btn">🏁 提前收工結算今天</button>
+  </details>
 </section>
 
-<aside class="right">
+<aside class="right"><details class="fold" id="status-d" data-testid="status-details"><summary>📋 詳細狀態與流程進度</summary>
   <div class="card" id="needs" data-testid="needs"><h3>寶寶與照顧者狀態</h3></div>
   <div class="card"><h3>觀察</h3><div id="obs" data-testid="observation"></div><div id="expr" data-testid="baby-expr" style="margin-top:4px;font-size:.85em"></div></div>
   <div class="card"><h3>流程進度（可以不照順序做，但會被提醒）</h3>
@@ -241,9 +340,9 @@ footer{font-size:.78em;color:#7a5a43;margin:8px 0}
     <div>用品：<span id="chk-stuff" data-testid="chk-stuff"></span></div>
   </div>
   <div class="card sched" id="sched" data-testid="schedule"><h3>今日日程</h3></div>
-</aside>
+</details></aside>
 </div>
-<footer>本版不保存進度：重新整理頁面就會重新開始。純離線、無外部資源。遊戲內容是簡化的照顧情境，不是醫療建議。快捷鍵：Z/X/C 換區、1–9 選物品、B/T/K 對寶寶／工作台／床使用、P 暫停。</footer>
+<footer>本版不保存進度：重新整理頁面就會重新開始。純離線、無外部資源。遊戲內容是簡化的照顧情境，不是醫療建議。操作：把托盤上的物品拖到發亮的位置，或直接點一下物品。快捷鍵：Z/X/C 換區、P 暫停（進階區另有 1–9、B/T/K）。</footer>
 </div>
 
 <!-- 覆蓋層 -->
@@ -253,7 +352,7 @@ footer{font-size:.78em;color:#7a5a43;margin:8px 0}
     <p>育嬰房裡有一位小寶寶。你要在四天（代表 1～4 月齡四個階段，並非真實成長速度）裡，自由安排餵奶、換尿布、抱抱、拍嗝、哄睡、陪玩，並照顧好自己的體力。</p>
     <ul>
       <li>需求會隨時間變化：肚子飽足、清潔、精神、情緒，以及照顧者體力。</li>
-      <li>先點選物品，再對寶寶／工作台／嬰兒床使用（也可拖曳或用鍵盤）。</li>
+      <li>開始會有一個很短的拖曳教學（可略過、之後可重看）。之後把托盤上的物品<b>拖到發亮的位置</b>，或直接點一下物品；托盤只會顯示現在這一步需要的東西。</li>
       <li>爸爸、媽媽規則完全相同；另一位會幫忙抱著寶寶，讓你去清潔區。</li>
       <li>沒有死亡或重病；表現會在每天結算，只用來學習，不是醫療評估。</li>
       <li>本版不保存進度；離開分頁時時間會暫停。</li>
@@ -263,7 +362,7 @@ footer{font-size:.78em;color:#7a5a43;margin:8px 0}
   </div>
 </div>
 <div class="overlay" id="ov-pause" data-testid="pause-overlay" hidden>
-  <div class="panel"><h2>⏸ 已暫停</h2><p id="pause-why">時間已停止，恢復時不會補算。</p><div class="row"><button id="resume-btn" data-testid="resume-btn">▶ 繼續</button></div></div>
+  <div class="panel"><h2>⏸ 已暫停</h2><p id="pause-why">時間已停止，恢復時不會補算。</p><div class="row"><button id="resume-btn" data-testid="resume-btn">▶ 繼續</button><button id="pause-tutorial" data-testid="pause-tutorial">🎓 重看教學</button></div></div>
 </div>
 <div class="overlay" id="ov-help" data-testid="help-overlay" hidden>
   <div class="panel">
@@ -358,7 +457,7 @@ function reduceDefault() { try { return !!(window.matchMedia && matchMedia('(pre
 function resetAll() {
   S = { phase: 'title', cg: 'mom', day: 1, clock: 0, now: 0, speed: 1, paused: false, pauseWhy: '', helpOpen: false,
     sound: false, reduce: reduceDefault(), zone: 'room', sel: null, msg: '', msgKind: 'info',
-    stamina: { mom: 100, dad: 100 }, history: [], final: null };
+    stamina: { mom: 100, dad: 100 }, history: [], final: null, tut: null, hintOn: false };
   initDay();
   S.msg = '請先選擇你是媽媽還是爸爸，開始照顧寶寶。';
 }
@@ -376,6 +475,7 @@ function initDay() {
   S.phone = { ringing: false, until: 0, warn: 0 }; S.banner = null;
   S.d = newDay(); S.cd = {}; S.lastErr = {}; S.sel = null;
   S.evq = EVENTS[S.day].map(function (e) { return { t: e.t, k: e.k, done: false }; });
+  S.task = suggestTask();
 }
 function win(c) { for (var i = 0; i < WINS.length; i++) if (c >= WINS[i][0] && c < WINS[i][1]) return { label: WINS[i][2], rm: WINS[i][3], fm: WINS[i][4], i: i }; return { label: WINS[4][2], rm: 1.2, fm: 1, i: 4 }; }
 
@@ -548,6 +648,7 @@ function settleCare() {
 }
 function finishDay(early) {
   if (S.phase !== 'play') return;
+  dragInterrupt();                 /* 結算前中斷尚未放開的物品，保留原有照護收尾與安全計分 */
   var D = S.d;
   D.early = early;
   settleCare();
@@ -914,6 +1015,14 @@ function onTarget(t, dropped) {
   if (!id) { say('先點選一個物品，再選擇要對寶寶／工作台／嬰兒床使用。', 'info'); render(); return; }
   use(id, t); render();
 }
+/* 點場景：有選物品就使用；否則做情境主要動作（例如點寶寶打開尿布），不然給提示 */
+function targetTap(t) {
+  if (S.phase === 'tutorial') { S.tut.msg = '請把下面的物品拖到發亮的寶寶身上（或直接點物品）。'; render(); return; }
+  if (!guard()) return;
+  if (S.sel) { onTarget(t); return; }
+  if (t === 'baby' && lastModel && lastModel.baby) { lastModel.baby(); render(); return; }
+  say(t === 'baby' ? '把托盤上的物品拖到寶寶身上，或直接點托盤上的物品。' : '把托盤上的物品拖到這裡，或直接點一下物品。', 'info'); render();
+}
 function silence() {
   if (!guard() || !S.phone.ringing) return;
   S.phone.ringing = false; S.banner = null; ev('phone', '把手機靜音，沒有接——先顧寶寶。'); say('手機靜音了，沒接電話沒關係。', 'ok'); render();
@@ -961,17 +1070,32 @@ function renderItems() {
   var ids = ZONE_ITEMS[S.zone];
   var html = ids.map(function (id, i) {
     var it = ITEMS[id], fit = id.indexOf('toy') === 0 && !it.bad && S.day >= it.min && S.day <= it.max;
-    return '<button class="item' + (S.sel === id ? ' sel' : '') + (fit ? ' fit' : '') + '" draggable="true" data-item="' + id + '" data-testid="item-' + id + '" aria-pressed="' + (S.sel === id) + '"><span class="em">' + it.e + '</span><span class="nm">' + it.n + '</span><small>' + itemSub(id) + '</small><kbd>' + (i + 1) + '</kbd></button>';
+    return '<button class="item' + (S.sel === id ? ' sel' : '') + (fit ? ' fit' : '') + '" data-item="' + id + '" data-testid="item-' + id + '" aria-pressed="' + (S.sel === id) + '"><span class="em">' + it.e + '</span><span class="nm">' + it.n + '</span><small>' + itemSub(id) + '</small><kbd>' + (i + 1) + '</kbd></button>';
   }).join('');
-  if (html === lastItemsHTML) return;
+  if (html === lastItemsHTML || DRAG) return;   /* 拖曳中不重建 DOM */
   var ae = document.activeElement, fid = ae && ae.getAttribute ? ae.getAttribute('data-testid') : null;
   lastItemsHTML = html; $('items').innerHTML = html;
   if (fid && fid.indexOf('item-') === 0) { var n = document.querySelector('[data-testid="' + fid + '"]'); if (n) n.focus(); }
 }
+/* 床／備物盤的落點挖掉寶寶的透明落點（evenodd），讓三者在幾何上互不重疊；洞只取與外框的交集，避免 evenodd 在外框外多填一塊 */
+var HIT_BOX = { 'hit-crib': [60, 140, 290, 190], 'hit-bench': [490, 250, 250, 120] }, BABY_HIT = [-95, -60, 190, 195];
+function cutHits(pos) {
+  var hb = pos ? [pos[0] + BABY_HIT[0] * pos[2], pos[1] + BABY_HIT[1] * pos[2], BABY_HIT[2] * pos[2], BABY_HIT[3] * pos[2]] : null;
+  Object.keys(HIT_BOX).forEach(function (id) {
+    var o = HIT_BOX[id], d = 'M' + o[0] + ' ' + o[1] + 'h' + o[2] + 'v' + o[3] + 'h' + (-o[2]) + 'Z';
+    if (hb) {
+      var x1 = Math.max(o[0], hb[0]), y1 = Math.max(o[1], hb[1]), x2 = Math.min(o[0] + o[2], hb[0] + hb[2]), y2 = Math.min(o[1] + o[3], hb[1] + hb[3]);
+      if (x2 > x1 && y2 > y1) d += 'M' + x1.toFixed(1) + ' ' + y1.toFixed(1) + 'H' + x2.toFixed(1) + 'V' + y2.toFixed(1) + 'H' + x1.toFixed(1) + 'Z';
+    }
+    var el = $(id); if (el.getAttribute('d') !== d) el.setAttribute('d', d);
+  });
+}
 function bottleColor(st) { return { dirty: '#b08968', soaped: '#e8e6ff', scrubbed: '#d3dcff', rinsed: '#bfe6ff', drying: '#cfeeff', ready: '#ffffff', filled: '#fff3c9', tested: '#ffe9a0' }[st]; }
 function render() {
   if (!S) return;
-  var b = S.baby, cl = 100 - b.soil, A = AGE[S.day], W = win(S.clock), ex = expr(), vis = babyVisible();
+  if (DRAG && !canAct()) dragInterrupt();                  /* 日結、暫停、求助等狀態改變：先收掉拖曳，再畫場景（落點跟著解凍） */
+  var tut = S.phase === 'tutorial', zone = tut ? 'room' : S.zone;
+  var b = S.baby, cl = 100 - b.soil, A = AGE[S.day], W = win(S.clock), ex = tut ? (S.tut.step >= TUT_STEPS.length ? 'happy' : 'calm') : expr(), vis = tut ? true : babyVisible();
   $('clk-day').textContent = '第 ' + S.day + ' / ' + MAXDAY + ' 天・' + A.name + '階段';
   $('clk').textContent = fmtClock(); $('clk-seg').textContent = '（' + (S.cg === 'mom' ? '媽媽' : '爸爸') + '・速度 ' + S.speed + 'x）';
   $('dayprog').style.width = (S.clock / DAY_LEN * 100) + '%';
@@ -983,7 +1107,9 @@ function render() {
   /* 需求 */
   setNeed('food', '肚子飽足', b.food); setNeed('clean', '清潔', cl); setNeed('rest', '精神（疲倦）', b.rest); setNeed('mood', '情緒', b.mood); setNeed('play', '想玩（好奇）', b.stim);
   setNeed('stamina', NAMES[S.cg] + '體力（你）', S.stamina[S.cg]); setNeed('stamina-partner', NAMES[other(S.cg)] + '體力', S.stamina[other(S.cg)]);
-  $('obs').textContent = observe();
+  $('obs').textContent = observe(); $('obs-mini').textContent = tut ? '' : observe();
+  $('mini').hidden = tut; $('obs-mini').hidden = tut; $('msg').hidden = tut; $('tasks').hidden = tut; $('adv').hidden = tut; $('status-d').hidden = tut; $('zones').hidden = tut;
+  renderMini();
   $('expr').textContent = '寶寶表情：' + EXPR_TXT[ex] + (S.resting ? '　☕ 你正在休息' : '');
   $('expr').setAttribute('data-expr', ex);
   /* 流程 */
@@ -995,6 +1121,7 @@ function render() {
   var sh = WINS.map(function (w, i) { return '<div class="' + (i === W.i ? 'now' : '') + '">' + w[2] + '</div>'; }).join('');
   if (sh !== lastSched) { lastSched = sh; $('sched').innerHTML = '<h3>今日日程（參考，可自由安排）</h3>' + sh; }
   /* 區域/物品/動詞 */
+  Array.prototype.forEach.call(document.querySelectorAll('#tasks button'), function (e) { var on = !tut && e.getAttribute('data-task') === curTask(); e.classList.toggle('on', on); e.setAttribute('aria-pressed', on ? 'true' : 'false'); });
   Array.prototype.forEach.call(document.querySelectorAll('#zones button'), function (e) { var on = e.getAttribute('data-zone') === S.zone; e.classList.toggle('on', on); if (on) e.setAttribute('aria-current', 'true'); else e.removeAttribute('aria-current'); });
   Array.prototype.forEach.call(document.querySelectorAll('#verbs button'), function (e) { e.hidden = (' ' + e.getAttribute('data-z') + ' ').indexOf(' ' + S.zone + ' ') < 0; });
   $('targets').querySelector('[data-target="crib"]').hidden = S.zone !== 'room';
@@ -1005,10 +1132,10 @@ function render() {
   $('end-day-btn').disabled = S.phase !== 'play' || S.clock < MIN_END;
   $('end-day-btn').textContent = S.clock < MIN_END ? '🏁 提前收工（今天過 1/3 後可用）' : '🏁 提前收工結算今天';
   /* 場景 */
-  show('sc-room', S.zone === 'room'); show('room-front', S.zone === 'room'); show('sc-clean', S.zone === 'clean'); show('sc-play', S.zone === 'play');
+  if (!(DRAG && DRAG.on)) { show('sc-room', zone === 'room'); show('room-front', zone === 'room'); show('sc-clean', zone === 'clean'); show('sc-play', zone === 'play'); }
   $('sky').setAttribute('fill', skyColor(S.clock / DAY_LEN)); $('sun').setAttribute('cx', 600 + 90 * (S.clock / DAY_LEN)); $('sun').setAttribute('cy', 130 - 60 * Math.sin(Math.PI * S.clock / DAY_LEN));
   $('lampglow').setAttribute('opacity', S.lamp ? 1 : 0);
-  $('dim').setAttribute('opacity', (S.zone === 'room' && S.lamp) ? 0.38 : 0);
+  $('dim').setAttribute('opacity', (!tut && S.zone === 'room' && S.lamp) ? 0.38 : 0);
   show('crib-clutter', S.crib.clutter); show('phone-waves', S.phone.ringing);
   $('tray-txt').textContent = (T.diaper ? '🩲' : '') + (T.clean ? (T.clean === 'wipes' ? '🧻' : '🧽') : '') + (T.towel ? '🧣' : '');
   $('trash-txt').textContent = S.trash ? ('×' + S.trash) : '';
@@ -1018,10 +1145,11 @@ function render() {
     $('bot-' + k + '-txt').textContent = k.toUpperCase() + '：' + BST[bt.st];
   });
   /* 寶寶 */
-  var bb = $('baby'); bb.style.display = vis ? '' : 'none'; $('hands').style.display = (vis && (b.loc === 'arms' || b.loc === 'partner')) ? '' : 'none';
-  var pos = { crib: [205, 200, 0.9], table: [615, 178, 0.9], arms: [400, 190, 1], partner: [400, 190, 1], mat: [400, 240, 0.9] }[b.loc];
+  var bb = $('baby'); bb.style.display = vis ? '' : 'none'; $('hands').style.display = (!tut && vis && (b.loc === 'arms' || b.loc === 'partner')) ? '' : 'none';
+  bb.classList.toggle('glow', tut && S.tut.step < TUT_STEPS.length);
+  var pos = { crib: [205, 200, 0.9], table: [615, 178, 0.9], arms: [400, 190, 1], partner: [400, 190, 1], mat: [400, 240, 0.9] }[tut ? 'table' : b.loc];
   var tr = 'translate(' + pos[0] + ' ' + pos[1] + ') scale(' + pos[2] + ')';
-  bb.setAttribute('transform', tr); $('hands').setAttribute('transform', tr);
+  if (!(DRAG && DRAG.on)) { bb.setAttribute('transform', tr); $('hands').setAttribute('transform', tr); cutHits(vis && zone === 'room' ? pos : null); }   /* 拖曳中落點不移動，放開後才更新 */
   var sl = b.loc === 'partner' ? (S.cg === 'mom' ? '#6fa6d6' : '#e58fb0') : (S.cg === 'mom' ? '#e58fb0' : '#6fa6d6');
   $('sleeve-l').setAttribute('fill', sl); $('sleeve-r').setAttribute('fill', sl);
   bb.setAttribute('data-expr', ex); bb.setAttribute('data-loc', b.loc);
@@ -1033,6 +1161,7 @@ function render() {
   if (!vis && S.phase === 'play') { mon.hidden = false; mon.textContent = '📟 寶寶監視器：' + EXPR_EM[ex] + ' ' + ({ crib: '在嬰兒床', table: '在尿布台', mat: '在遊戲墊', partner: '在' + NAMES[other(S.cg)] + '手上', arms: '在手上' }[b.loc]) + (ex === 'cry' ? '（聽到哭聲）' : ''); }
   else mon.hidden = true;
   var bn = $('banner'); if (S.banner && S.phase === 'play') { bn.hidden = false; $('banner-txt').textContent = S.banner.text; $('phone-silence').hidden = !S.phone.ringing; bn.setAttribute('data-kind', S.banner.kind); } else bn.hidden = true;
+  renderTray(); renderTut();
   /* 覆蓋層 */
   $('ov-title').hidden = S.phase !== 'title';
   $('ov-pause').hidden = !(S.paused && S.phase === 'play' && !S.helpOpen);
@@ -1064,11 +1193,353 @@ function renderFinal() {
     '<div class="row"><button id="replay-btn" data-testid="replay-btn">🔄 重新開始（完全清空）</button></div>';
 }
 
+/* ---------- 操作托盤：依目前步驟只顯示需要的物品與動作 ---------- */
+var ZN = { room: '房間', clean: '清潔區', play: '遊戲角' };
+var TASK_NAME = { diaper: '換尿布', feed: '餵奶', sleep: '哄睡', play: '陪玩', hug: '抱抱', rest: '休息' };
+var ACT_LABEL = { pickup: '🤱 抱起寶寶', steady: '🫶 托穩頭頸', putdown: '🛏 放回床（仰睡）', table: '🪑 放上尿布台', open: '🩲 打開尿布', hug: '🤗 抱抱', burp: '👋 拍嗝',
+  soothe: '🎶 輕拍安撫', feedstop: '✋ 停止餵奶', clearcrib: '🧹 清空床面', mat: '🟠 放遊戲墊', washhands: '🧼 洗手', trash: '🗑 倒垃圾', handover: '🤝 交接', rest: '☕ 休息' };
+var TUT_STEPS = [
+  { id: 'wipes', txt: '① 清潔：用手指按住 🧻 濕巾，拖到發亮的寶寶身上再放開（也可以直接點一下濕巾）。' },
+  { id: 'towel', txt: '② 擦乾：把 🧣 乾毛巾 拖到寶寶身上。' },
+  { id: 'diaper', txt: '③ 穿上：把 🩲 新尿布 拖到寶寶身上。' }
+];
+var lastModel = null, lastTraySig = '', DRAG = null, lastDragEnd = 0, suppressClick = false, suppressPid = null, multiTouch = false;
+
+function suggestTask() { var b = S.baby; if (b.soil >= 45) return 'diaper'; if (b.food < 45) return 'feed'; if (b.rest < 40) return 'sleep'; return 'feed'; }
+function forcedTask() {
+  var b = S.baby, F = S.feed;
+  if (b.loc === 'table') return 'diaper';
+  if (F.active || F.needBurp) return 'feed';
+  return null;
+}
+function curTask() { return forcedTask() || S.task || 'feed'; }
+function setTask(k) {
+  if (!guard()) return;
+  var f = forcedTask();
+  if (f && f !== k) { say('先把現在的步驟做完：' + TASK_NAME[f] + '。', 'warn'); render(); return; }
+  S.task = k; render();
+}
+function newModel(task) { return { task: task, hint: '', items: [], acts: [], baby: null }; }
+function mItem(m, id, next) { m.items.push({ id: id, next: !!next }); }
+function mAct(m, a, next) { m.acts.push({ a: a, next: !!next }); }
+function mGo(m, z, next) { m.acts.push({ go: z, next: !!next }); }
+function reachBaby(m) {
+  if (babyVisible()) return true;
+  var home = S.baby.loc === 'mat' ? 'play' : 'room';
+  m.hint = '寶寶在' + ZN[home] + '，先過去。'; mGo(m, home, true); return false;
+}
+function holdSteps(m, why) {
+  var b = S.baby;
+  if (!reachBaby(m)) return false;
+  if (b.loc === 'arms') { if (!b.steady) { m.hint = (why || '') + '托穩頭頸，寶寶才安全。'; mAct(m, 'steady', true); return false; } return true; }
+  m.hint = (why || '') + '先抱起寶寶。'; mAct(m, 'pickup', true); return false;
+}
+function taskDiaper(m) {
+  var b = S.baby, D = S.diaper, T = S.tray, z = S.zone, i;
+  if (b.loc === 'table') {
+    if (z !== 'room') { m.hint = '寶寶在尿布台上，先回房間。'; mGo(m, 'room', true); return; }
+    if (D.step < 2) { m.hint = '步驟 4/8：打開尿布。點寶寶，或按下面的按鈕。'; mAct(m, 'open', true); m.baby = function () { act('open'); }; return; }
+    if (D.step === 2) { m.hint = '步驟 5/8：清潔。把' + ITEMS[T.clean || 'wipes'].n + '拖到寶寶身上（也可以直接點）。'; mItem(m, T.clean || 'wipes', true); return; }
+    if (D.step === 3) { m.hint = '步驟 6/8：擦乾。把乾毛巾拖到寶寶身上。'; mItem(m, 'towel', true); return; }
+    if (D.step === 4) { m.hint = '步驟 7/8：包上新尿布。把新尿布拖到寶寶身上。'; mItem(m, 'diaper', true); return; }
+    m.hint = '新尿布包好了！接著抱起寶寶、托穩，放回床。'; mAct(m, 'pickup', true); return;
+  }
+  if (D.pendingWash) {
+    if (b.loc === 'arms' || b.loc === 'partner' || b.loc === 'mat') {
+      if (b.loc === 'arms' && z === 'room') { if (!b.steady) { m.hint = '步驟 8/8：先托穩，再放回床。'; mAct(m, 'steady', true); } else { m.hint = '步驟 8/8：把寶寶放回床，然後去洗手。'; mAct(m, 'putdown', true); } return; }
+      if (reachBaby(m)) { m.hint = '步驟 8/8：先抱起寶寶放回床，再去洗手。'; mAct(m, 'pickup', true); }
+      return;
+    }
+    if (z !== 'clean') { m.hint = '步驟 8/8：去清潔區洗手。'; mGo(m, 'clean', true); return; }
+    m.hint = '步驟 8/8：用肥皂洗手。'; mAct(m, 'washhands', true);
+    if (S.trash > 0) mAct(m, 'trash'); return;
+  }
+  if (z === 'clean') {
+    if (!T.clean && S.stock.wipes <= 0 && S.cloth.st !== 'wet') {
+      if (S.cloth.st === 'dry') { m.hint = '濕巾用完了：把小方巾拖到工作台，用清水沾濕。'; mItem(m, 'cloth', true); }
+      else { m.hint = '小方巾用過了：把肥皂拖到工作台洗乾淨。'; mItem(m, 'soap', true); }
+    } else { m.hint = '尿布用品放在房間，回房間準備。'; mGo(m, 'room', true); }
+    if (S.trash > 0) mAct(m, 'trash'); if (!S.hands[S.cg]) mAct(m, 'washhands');
+    return;
+  }
+  if (z === 'play') {
+    if (b.loc === 'mat') { m.hint = '寶寶在遊戲墊上，先抱起寶寶再回房間。'; mAct(m, 'pickup', true); } else { m.hint = '尿布用品在房間，回房間。'; mGo(m, 'room', true); }
+    return;
+  }
+  var miss = [];
+  if (!T.diaper) miss.push('diaper');
+  if (!T.clean) { if (S.stock.wipes > 0) miss.push('wipes'); else if (S.cloth.st === 'wet') miss.push('cloth'); }
+  if (!T.towel) miss.push('towel');
+  var needCloth = !T.clean && S.stock.wipes <= 0 && S.cloth.st !== 'wet';
+  if (miss.length || needCloth) {
+    m.hint = '步驟 1/8：備物。把物品拖到右邊桌子（備物盤），點一下也可以。' + (needCloth ? '濕巾用完了，小方巾要先到清潔區沾濕。' : '');
+    for (i = 0; i < miss.length; i++) mItem(m, miss[i], i === 0);
+    if (needCloth) mGo(m, 'clean', !miss.length);
+    return;
+  }
+  if (b.soil < 35) { m.hint = '備物完成。寶寶現在尿布還很乾爽，不用換；等他濕了再來。'; if (b.loc === 'arms') mAct(m, 'putdown'); return; }
+  if (!holdSteps(m, '步驟 2/8：安全安置。')) return;
+  m.hint = '步驟 3/8：寶寶抱穩了，放上尿布台（手不離開寶寶）。'; mAct(m, 'table', true); mAct(m, 'putdown');
+}
+function prepBottle(m, tid) {
+  var hands = S.hands[S.cg], has = function (s) { return S.bottles.some(function (x) { return x.st === s; }); }, nxt = null;
+  if (tid) {
+    if (!hands) { m.hint = '奶瓶備好了。手還沒洗，先洗手。'; mAct(m, 'washhands', true); }
+    else { m.hint = '奶瓶備好了，手也乾淨。回房間抱起寶寶餵奶。'; mGo(m, 'room', true); }
+    return;
+  }
+  if (has('filled')) { m.hint = '備奶 2/2：把「手腕試溫」拖到工作台，確認溫度剛好。'; nxt = 'wrist'; }
+  else if (has('ready')) { m.hint = '備奶 1/2：把「奶粉／母乳」拖到工作台，裝進乾淨奶瓶。'; nxt = 'milk'; }
+  else if (has('rinsed')) { m.hint = '洗奶瓶 4/4：把瀝水架拖到工作台，瀝乾。'; nxt = 'rack'; }
+  else if (has('scrubbed')) { m.hint = '洗奶瓶 3/4：把清水拖到工作台沖乾淨。'; nxt = 'water'; }
+  else if (has('soaped')) { m.hint = '洗奶瓶 2/4：把奶瓶刷拖到工作台刷洗。'; nxt = 'brush'; }
+  else if (has('dirty')) { m.hint = '沒有乾淨奶瓶。洗奶瓶 1/4：把肥皂拖到工作台。'; nxt = 'soap'; }
+  else m.hint = '奶瓶還在瀝乾，等一下就好。';
+  if (nxt) mItem(m, nxt, true);
+  if (!hands) mAct(m, 'washhands', !nxt);
+}
+function taskFeed(m) {
+  var b = S.baby, F = S.feed, z = S.zone, tested = S.bottles.filter(function (x) { return x.st === 'tested'; })[0], tid = tested ? 'bottle-' + tested.id : null;
+  if (F.active) {
+    if (F.signal) { m.hint = '寶寶轉頭、閉嘴＝吃飽了。請按「停止餵奶」，不要再餵。'; mAct(m, 'feedstop', true); }
+    else { m.hint = '少量慢慢餵：把奶瓶拖到寶寶身上（已 ' + F.sips + ' 口）。看到轉頭閉嘴就停止。'; if (tid) mItem(m, tid, true); mAct(m, 'feedstop'); }
+    return;
+  }
+  if (F.needBurp) {
+    m.hint = F.tried ? '可以再輕拍幾下；沒打嗝也不勉強，輕輕放回床。' : '餵完要拍嗝：輕輕拍寶寶的背。';
+    mAct(m, 'burp', !F.tried); if (F.tried) mAct(m, 'putdown', true); return;
+  }
+  if (b.loc === 'arms') {
+    if (!b.steady) { m.hint = '先托穩頭頸，才能餵奶。'; mAct(m, 'steady', true); return; }
+    if (!tid) { m.hint = F.burped ? '餵奶完成 🎉 把寶寶放回床休息。想再餵要先備奶。' : '還沒有備好的奶瓶。先放回床，再去清潔區備奶。'; mAct(m, 'putdown', true); mAct(m, 'handover'); return; }
+    if (!S.hands[S.cg]) { m.hint = '手還沒洗。先放回床，去清潔區洗手。'; mAct(m, 'putdown', true); mAct(m, 'handover'); return; }
+    m.hint = '把奶瓶拖到寶寶身上開始餵（點奶瓶也可以）。'; mItem(m, tid, true); mAct(m, 'putdown'); return;
+  }
+  if (z === 'clean') { prepBottle(m, tid); return; }
+  if (!tid || !S.hands[S.cg]) { m.hint = !tid ? '第一步：到清潔區準備奶瓶（裝奶、試溫）。' : '手還沒洗，先去清潔區洗手。'; mGo(m, 'clean', true); return; }
+  holdSteps(m, '奶瓶備好了。');
+}
+function taskSleep(m) {
+  var b = S.baby, z = S.zone;
+  if (b.asleep) { m.hint = '寶寶睡著了 😴 小聲一點。想喘口氣可以休息。'; if (b.loc === 'crib') mAct(m, 'rest', true); if (S.crib.clutter) mAct(m, 'clearcrib'); return; }
+  if (z !== 'room') { m.hint = '嬰兒床和夜燈在房間，回房間哄睡。'; if (b.loc === 'mat') mAct(m, 'pickup', true); else mGo(m, 'room', true); return; }
+  if (S.crib.clutter) { m.hint = '床上有東西！睡覺的床要平坦、空無一物。'; mAct(m, 'clearcrib', true); return; }
+  if (b.loc === 'arms') { if (!b.steady) { m.hint = '先托穩，再放回床。'; mAct(m, 'steady', true); } else { m.hint = '把寶寶放回平坦空床（仰睡）。'; mAct(m, 'putdown', true); } return; }
+  if (b.loc !== 'crib') { if (reachBaby(m)) { m.hint = '先抱起寶寶，再放回床。'; mAct(m, 'pickup', true); } return; }
+  if (!S.lamp) { m.hint = '步驟 1/2：把夜燈拖到房間，調暗燈光（點一下也可以）。'; mItem(m, 'lamp', true); mAct(m, 'soothe'); return; }
+  m.hint = '步驟 2/2：輕輕拍、哼歌安撫（目前安撫 ' + b.calm + '），等寶寶睡著。'; mAct(m, 'soothe', true);
+}
+function taskPlay(m) {
+  var b = S.baby, z = S.zone, P = S.play;
+  if (b.asleep) { m.hint = '寶寶睡著了，不要吵他；等他醒來再玩。'; return; }
+  var toys = ZONE_ITEMS.play.filter(function (id) { var it = ITEMS[id]; return !it.bad && S.day >= it.min && S.day <= it.max; });
+  if (b.loc === 'mat') {
+    if (z !== 'play') { m.hint = '寶寶在遊戲角的墊子上，去遊戲角。'; mGo(m, 'play', true); return; }
+    m.hint = '把適合月齡的玩具拖到寶寶身上（進度 ' + P.prog + '／3）。連玩同一個會膩。';
+    toys.forEach(function (id, i) { mItem(m, id, i === 0); }); mAct(m, 'pickup'); return;
+  }
+  if (b.loc === 'arms') {
+    if (!b.steady) { m.hint = '先托穩頭頸，再陪玩。'; mAct(m, 'steady', true); return; }
+    if (z !== 'play') { m.hint = '抱著寶寶去遊戲角。'; mGo(m, 'play', true); mAct(m, 'putdown'); return; }
+    m.hint = '放到遊戲墊上玩，或抱著直接玩。'; mAct(m, 'mat', true); toys.forEach(function (id) { mItem(m, id, false); }); return;
+  }
+  if (reachBaby(m)) { m.hint = '先抱起寶寶，再帶去遊戲角。'; mAct(m, 'pickup', true); }
+}
+function taskHug(m) {
+  var b = S.baby;
+  if (b.asleep) { m.hint = '寶寶睡著了，先不要吵醒他。'; return; }
+  if (!holdSteps(m, '')) return;
+  m.hint = '輕輕抱抱寶寶。（心情已經很好時不用一直抱）'; mAct(m, 'hug', true); mAct(m, 'putdown');
+}
+function taskRest(m) {
+  var b = S.baby;
+  if (S.resting) { m.hint = '休息中，體力慢慢恢復。寶寶醒來會自動結束。'; mAct(m, 'rest', true); return; }
+  if (b.loc === 'partner') { m.hint = '伴侶抱著寶寶，你可以休息或去做家務。'; mAct(m, 'rest', true); mAct(m, 'handover'); return; }
+  if (b.asleep && b.loc === 'crib') { m.hint = '寶寶睡著了，趁現在喘口氣。'; mAct(m, 'rest', true); return; }
+  if (b.loc === 'arms') { if (!b.steady) { m.hint = '先托穩，再交接。'; mAct(m, 'steady', true); } else { m.hint = '交給伴侶抱著，你就能休息或做家務。'; mAct(m, 'handover', true); } return; }
+  m.hint = '寶寶睡著，或交給伴侶抱著，才能放心休息。'; if (reachBaby(m)) mAct(m, 'pickup');
+}
+function trayModel() {
+  var task = curTask(), m = newModel(task);
+  ({ diaper: taskDiaper, feed: taskFeed, sleep: taskSleep, play: taskPlay, hug: taskHug, rest: taskRest })[task](m);
+  return m;
+}
+function tutModel() {
+  var m = newModel('tut'), cur = TUT_STEPS[S.tut.step];
+  if (cur) mItem(m, cur.id, true);
+  return m;
+}
+var TN = { baby: '寶寶身上', crib: '嬰兒床' };
+function tName(t) { return t === 'bench' ? (S.zone === 'clean' && S.phase !== 'tutorial' ? '工作台' : '備物盤（右邊桌子）') : TN[t]; }
+function careItemForStep(id) {
+  var D = S.diaper, T = S.tray;
+  if (D.step === 2) return id === (T.clean || 'wipes');
+  if (D.step === 3) return id === 'towel';
+  if (D.step === 4) return id === 'diaper';
+  return false;
+}
+/* 物品現在「合理」的落點；拖到其他位置只會提示，不會有任何副作用 */
+function legalTargets(id) {
+  var b = S.baby, z = S.zone;
+  if (S.phase === 'tutorial') { var cur = S.tut && TUT_STEPS[S.tut.step]; return cur && cur.id === id ? ['baby'] : []; }
+  if (id.indexOf('bottle') === 0) return (b.loc === 'arms' && babyVisible()) ? ['baby'] : [];
+  if (id.indexOf('toy') === 0) return (z === 'play' && (b.loc === 'mat' || b.loc === 'arms') && babyVisible()) ? ['baby'] : [];
+  if (id === 'diaper' || id === 'wipes' || id === 'cloth' || id === 'towel') {
+    if (b.loc === 'table' && z === 'room') return careItemForStep(id) ? ['baby'] : [];
+    if (z === 'room') return ['bench'];
+    if (z === 'clean' && id === 'cloth') return ['bench'];
+    return [];
+  }
+  if (id === 'lamp') return z === 'room' ? ['bench'] : [];
+  return z === 'clean' ? ['bench'] : [];
+}
+function dropHint(id, t) {
+  var L = legalTargets(id), n = ITEMS[id].n;
+  if (!L.length) return n + '現在用不到，沒有任何改變。';
+  return n + '要放到「' + L.map(tName).join('／') + '」，不是「' + tName(t) + '」。沒有任何改變。';
+}
+function canAct() { return S.phase === 'tutorial' || guard(); }
+/* 拖放與點選共用：非法落點只提示，不呼叫任何照護動作 */
+function dropItem(id, t) {
+  if (S.phase === 'tutorial') { tutDrop(id, t); return; }
+  if (!guard()) return;
+  if (!t) { say('沒有放到目標上，什麼都沒有改變。', 'info'); return; }
+  if (legalTargets(id).indexOf(t) < 0) { say(dropHint(id, t), 'warn'); return; }
+  use(id, t);
+}
+function trayUse(id) {
+  if (!canAct()) return;
+  var L = legalTargets(id);
+  if (S.phase === 'tutorial') { tutDrop(id, L[0] || null); render(); return; }
+  if (!L.length) { say(ITEMS[id].n + '現在用不到，沒有任何改變。', 'warn'); render(); return; }
+  use(id, L[0]); render();
+}
+function renderTray() {
+  if (DRAG && !canAct()) dragInterrupt();                  /* 保險：暫停、日結等狀態改變時安全收掉拖曳 */
+  var tut = S.phase === 'tutorial', m = tut ? tutModel() : (S.phase === 'play' ? trayModel() : newModel('none'));
+  lastModel = m;
+  var th = $('tray-hint'); th.hidden = tut; if (th.textContent !== m.hint) th.textContent = m.hint;
+  var sig = S.phase + '|' + JSON.stringify([m.items.map(function (i) { return [i.id, i.next, tut ? '' : itemSub(i.id)]; }), m.acts]);
+  if (sig !== lastTraySig && DRAG) return;                 /* 拖曳中凍結托盤 DOM，放開後再更新 */
+  if (sig !== lastTraySig) {
+    lastTraySig = sig; S.hintOn = false;
+    var body = $('tray-body'), ae = document.activeElement, fk = ae && ae.getAttribute && body.contains(ae) ? ae.getAttribute('data-key') : null, hadFocus = !!(ae && body.contains(ae));
+    body.innerHTML = m.items.map(function (i) {
+      var it = ITEMS[i.id], sub = tut ? '' : itemSub(i.id), L = legalTargets(i.id).map(tName).join('／');
+      return '<button class="tray-item' + (i.next ? ' next' : '') + '" data-item="' + i.id + '" data-ti="1" data-key="i-' + i.id + '" data-testid="tray-item-' + i.id + '" aria-label="' + it.n + (L ? '：拖曳到' + L + '，或按一下直接使用' : '：現在用不到') + '"><span class="em" aria-hidden="true">' + it.e + '</span><span class="nm">' + it.n + '</span>' + (sub ? '<small>' + sub + '</small>' : '') + '</button>';
+    }).join('') + m.acts.map(function (a) {
+      if (a.go) return '<button class="tact' + (a.next ? ' next' : '') + '" data-tgo="' + a.go + '" data-key="g-' + a.go + '" data-testid="tray-go-' + a.go + '">➜ 去' + ZN[a.go] + '</button>';
+      return '<button class="tact' + (a.next ? ' next' : '') + '" data-tact="' + a.a + '" data-key="a-' + a.a + '" data-testid="tray-act-' + a.a + '">' + ACT_LABEL[a.a] + '</button>';
+    }).join('');
+    if (hadFocus) { var n = (fk ? body.querySelector('[data-key="' + fk + '"]') : null) || body.querySelector('button'); if (n) n.focus(); }
+  }
+  $('tray').classList.toggle('hint-on', !!S.hintOn);
+}
+function renderMini() {
+  var b = S.baby, v = { food: b.food, clean: 100 - b.soil, rest: b.rest, mood: b.mood, stamina: S.stamina[S.cg] },
+    nm = { food: '肚子飽足', clean: '清潔', rest: '精神', mood: '情緒', stamina: '你的體力' };
+  Object.keys(v).forEach(function (k) {
+    var el = $('mini-' + k), val = Math.round(v[k]), bar = el.querySelector('i');
+    bar.style.width = val + '%'; bar.className = val < 30 ? 'low' : (val < 55 ? 'mid' : '');
+    el.querySelector('em').textContent = val; el.setAttribute('data-value', val); el.setAttribute('aria-label', nm[k] + ' ' + val);
+  });
+}
+function renderTut() {
+  var tut = S.phase === 'tutorial'; $('tut').hidden = !tut; if (!tut) return;
+  var T = S.tut, cur = TUT_STEPS[T.step];
+  $('tut-step').textContent = cur ? '教學 ' + (T.step + 1) + '／' + TUT_STEPS.length : '教學完成 ✓';
+  $('tut-text').textContent = cur ? cur.txt : '太棒了！寶寶換好乾淨尿布，笑得很開心。真正照顧時還要先備物、打開尿布，最後別忘了洗手。';
+  $('tut-fb').textContent = T.msg || '這只是示範：不計分、時間暫停，隨時可以略過。';
+  $('tut-done').hidden = !!cur; $('tut-done').textContent = T.from === 'title' ? '開始照顧寶寶 ▶' : '回到遊戲（仍暫停）▶';
+}
+
+/* ---------- 開場教學（獨立小狀態，不碰正式遊戲） ---------- */
+function tutStart(from) {
+  S.tut = { step: 0, from: from, msg: '', sel: from === 'play' ? S.sel : null };   /* 重看教學要記住手上的物品，離開時還給正式遊戲 */
+  if (from === 'play') { S.paused = true; S.pauseWhy = 'manual'; }
+  S.phase = 'tutorial'; S.sel = null; lastTraySig = '';
+}
+function tutDrop(id, t) {
+  var T = S.tut, cur = T && TUT_STEPS[T.step];
+  if (!cur) return;
+  if (!t) { T.msg = '沒有放到寶寶身上，再試一次。這只是示範，沒有任何改變。'; return; }
+  if (t !== 'baby') { T.msg = '要拖到發亮的寶寶身上喔，不是' + tName(t) + '。'; return; }
+  if (id !== cur.id) { T.msg = '現在要用的是' + ITEMS[cur.id].n + '。'; return; }
+  T.step++; T.msg = T.step >= TUT_STEPS.length ? '' : '做得好！下一步。';
+}
+function tutExit(kind) {
+  var T = S.tut; if (S.phase !== 'tutorial' || !T) return;
+  dragCleanup();
+  S.tut = null; lastTraySig = ''; lastItemsHTML = '';
+  if (T.from === 'title') {
+    /* 首次教學：丟掉教學期間的一切，給乾淨的正式第 1 天 */
+    S.stamina = { mom: 100, dad: 100 }; S.history = []; S.day = 1; S.final = null; S.paused = false; S.pauseWhy = '';
+    initDay(); S.phase = 'play';
+    say(kind === 'skip' ? '第 1 天開始了。先看看寶寶需要什麼，跟著托盤的提示做。' : '教學完成！第 1 天開始了。跟著托盤的提示照顧寶寶。', 'info');
+    ev('day', '第 1 天開始（' + NAMES[S.cg] + '）');
+  } else {
+    S.phase = 'play'; S.paused = true; S.pauseWhy = 'manual'; S.sel = T.sel && ITEMS[T.sel] ? T.sel : null;
+    say('教學結束。遊戲仍暫停中，按「繼續」回到遊戲。', 'info');
+  }
+  render();
+}
+
+/* ---------- Pointer Events 拖曳（滑鼠與觸控共用，不使用 HTML5 drag-drop） ---------- */
+function targetAt(x, y) {
+  var e = document.elementFromPoint(x, y), t = e && e.closest ? e.closest('[data-target]') : null;
+  return t ? t.getAttribute('data-target') : null;
+}
+function eachTarget(fn) { Array.prototype.forEach.call(document.querySelectorAll('#scene [data-target]'), fn); }
+function setLegal(list) { eachTarget(function (el) { el.classList.toggle('legal', list.indexOf(el.getAttribute('data-target')) >= 0); el.classList.remove('hover', 'bad'); }); }
+function setHover(t, ok) { eachTarget(function (el) { var is = !!t && el.getAttribute('data-target') === t; el.classList.toggle('hover', is && ok); el.classList.toggle('bad', is && !ok); }); }
+function dragCleanup() {
+  var d = DRAG; if (!d) return;
+  DRAG = null;
+  if (d.ghost && d.ghost.parentNode) d.ghost.parentNode.removeChild(d.ghost);
+  d.el.classList.remove('lifting'); document.body.classList.remove('is-dragging');
+  setLegal([]);
+  try { d.el.releasePointerCapture(d.pid); } catch (x) { /* 已釋放 */ }
+}
+function moveGhost(d, x, y) { d.ghost.style.transform = 'translate(' + Math.round(x - 20) + 'px,' + Math.round(y - (d.type === 'touch' ? 64 : 24)) + 'px)'; }
+function startDrag(d, x, y) {
+  d.on = true;
+  var g = document.createElement('div'); g.id = 'ghost'; g.setAttribute('data-testid', 'drag-ghost'); g.setAttribute('aria-hidden', 'true'); g.textContent = ITEMS[d.id].e;
+  document.body.appendChild(g); d.ghost = g; moveGhost(d, x, y);
+  d.el.classList.add('lifting'); document.body.classList.add('is-dragging');
+  var L = legalTargets(d.id); setLegal(L);
+  if (S.phase !== 'tutorial') { say(L.length ? '把「' + ITEMS[d.id].n + '」拖到發亮的位置，放開即可。' : ITEMS[d.id].n + '現在用不到。', 'info'); }
+}
+function dragCancel(msg) {
+  var d = DRAG; if (!d) return;
+  var was = d.on; dragCleanup();
+  /* 同一次按壓放開後瀏覽器仍可能補 click（Esc、失去 capture、未達門檻都一樣）：這次序列的 click 一律吃掉。
+     指標還按著時不計時，等到它放開（pointerup）才開始算那 600ms。 */
+  suppressClick = true; suppressPid = d.pid; lastDragEnd = performance.now();
+  if (was) { if (S.phase === 'tutorial') S.tut.msg = msg; else say(msg, 'info'); render(); }
+}
+/* 由狀態改變（日結、暫停、離開頁面）中斷：與取消相同地吃掉這次按壓的 click，但不在 render 中再呼叫 render */
+function dragInterrupt() {
+  var d = DRAG; if (!d) return;
+  dragCleanup();
+  suppressClick = true; suppressPid = d.pid; lastDragEnd = performance.now();
+  if (d.on && S.phase === 'play') say('拖曳被中斷了，什麼都沒有改變。', 'info');
+}
+function releaseSuppress(e) { if (suppressPid !== null && e.pointerId === suppressPid) { suppressPid = null; lastDragEnd = performance.now(); } }
+
 /* ---------- 事件綁定 ---------- */
 function bind() {
   document.addEventListener('click', function (e) {
     var t = e.target.closest ? e.target.closest('button,[data-target]') : null; if (!t) return;
-    if (t.hasAttribute('data-start')) { if (S.phase !== 'title') return; S.cg = t.getAttribute('data-start'); S.phase = 'play'; say('第 1 天開始了。先看看寶寶需要什麼。', 'info'); ev('day', '第 1 天開始（' + NAMES[S.cg] + '）'); render(); return; }
+    if (DRAG || multiTouch) return;                         /* 拖曳進行中、或這次是多指操作：只認主指的拖曳，其他指的點擊不改任何狀態 */
+    if (t.hasAttribute('data-start')) { if (S.phase !== 'title') return; S.cg = t.getAttribute('data-start'); tutStart('title'); render(); return; }
+    if (t.id === 'tut-skip') { tutExit('skip'); return; }
+    if (t.id === 'tut-done') { tutExit('done'); return; }
+    if (t.id === 'btn-tutorial' || t.id === 'pause-tutorial') { if (S.phase === 'play' && !S.helpOpen) { tutStart('play'); render(); } return; }
+    if (t.id === 'btn-hint') { if (S.phase === 'play' || S.phase === 'tutorial') { S.hintOn = true; if (S.phase === 'play' && lastModel && lastModel.hint) say('提示：' + lastModel.hint, 'info'); render(); } return; }
+    if (t.hasAttribute('data-ti')) { if (suppressClick && (suppressPid !== null || performance.now() - lastDragEnd < 600)) { suppressClick = false; suppressPid = null; return; } trayUse(t.getAttribute('data-item')); return; }
+    if (t.hasAttribute('data-tact')) { act(t.getAttribute('data-tact')); return; }
+    if (t.hasAttribute('data-tgo')) { go(t.getAttribute('data-tgo')); return; }
+    if (t.hasAttribute('data-task')) { setTask(t.getAttribute('data-task')); return; }
     if (t.id === 'btn-pause') { if (S.phase !== 'play' || S.helpOpen) return; setPaused(!S.paused, 'manual'); return; }
     if (t.id === 'resume-btn') { if (S.phase !== 'play' || S.helpOpen) return; setPaused(false, ''); return; }
     if (t.id === 'btn-speed') { S.speed = S.speed === 1 ? 2 : 1; render(); return; }
@@ -1079,29 +1550,63 @@ function bind() {
     if (t.id === 'phone-silence') { silence(); return; }
     if (t.id === 'end-day-btn') { if (guard() && S.clock >= MIN_END) finishDay(true); return; }
     if (t.id === 'next-day-btn') { nextDay(); return; }
-    if (t.id === 'replay-btn') { lastDayKey = ''; lastFinalKey = ''; lastItemsHTML = ''; resetAll(); render(); return; }
+    if (t.id === 'replay-btn') { lastDayKey = ''; lastFinalKey = ''; lastItemsHTML = ''; lastTraySig = ''; resetAll(); render(); return; }
     if (t.id === 'clear-sel') { if (guard()) { S.sel = null; render(); } return; }
     if (t.id === 'use-btn') { if (!guard()) return; if (!S.sel) { say('先點選一個物品。', 'info'); render(); return; } use(S.sel, defTarget(S.sel)); render(); return; }
     if (t.hasAttribute('data-zone')) { go(t.getAttribute('data-zone')); return; }
     if (t.hasAttribute('data-item')) { if (!guard()) return; var id = t.getAttribute('data-item'); S.sel = S.sel === id ? null : id; say(S.sel ? ITEMS[id].n + ' 拿在手上了。接著點「對寶寶／工作台／嬰兒床使用」。' : '放下了。', 'info'); render(); return; }
     if (t.hasAttribute('data-act')) { act(t.getAttribute('data-act')); return; }
-    if (t.hasAttribute('data-target')) { onTarget(t.getAttribute('data-target')); return; }
+    if (t.hasAttribute('data-target')) { targetTap(t.getAttribute('data-target')); return; }
   });
-  document.addEventListener('dragstart', function (e) {
-    var t = e.target.closest ? e.target.closest('[data-item]') : null; if (!t || !guard()) return;
-    var id = t.getAttribute('data-item'); try { e.dataTransfer.setData('text/plain', id); } catch (x) { /* 略 */ }
-    S.sel = id;
+  /* Pointer Events 拖曳：pointerdown 開始追蹤，移動超過門檻才算拖曳；沒移動就當作點選（交給 click） */
+  document.addEventListener('pointerdown', function (e) {
+    if (!e.isPrimary) { multiTouch = true; return; }        /* 第二指以上：不開始拖曳、不清除抑制，也讓它的 click 不生效 */
+    multiTouch = false;
+    suppressClick = false; suppressPid = null;              /* 新的一次主指互動：之前拖曳留下的「吃掉下一個 click」作廢 */
+    var el = e.target.closest ? e.target.closest('.tray-item') : null;
+    if (!el || DRAG || !canAct()) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    DRAG = { id: el.getAttribute('data-item'), pid: e.pointerId, el: el, x0: e.clientX, y0: e.clientY, on: false, ghost: null, type: e.pointerType, t: null };
+    try { el.setPointerCapture(e.pointerId); } catch (x) { /* 沒有捕捉也能靠 document 事件 */ }
   });
-  document.addEventListener('dragover', function (e) { if (e.target.closest && e.target.closest('[data-target]')) e.preventDefault(); });
-  document.addEventListener('drop', function (e) {
-    var t = e.target.closest ? e.target.closest('[data-target]') : null; if (!t) return; e.preventDefault();
-    var id = ''; try { id = e.dataTransfer.getData('text/plain'); } catch (x) { id = ''; }
-    onTarget(t.getAttribute('data-target'), id || S.sel);
+  document.addEventListener('pointermove', function (e) {
+    var d = DRAG; if (!d || e.pointerId !== d.pid) return;
+    /* 保險：拿過 capture 但現在已不在物品上（lostpointercapture 未送達時）也當作中斷 */
+    if (d.captured && d.el.hasPointerCapture && !d.el.hasPointerCapture(d.pid)) { dragCancel('拖曳被中斷了，什麼都沒有改變。'); return; }
+    if (!d.on) { if (Math.abs(e.clientX - d.x0) + Math.abs(e.clientY - d.y0) < 8) return; startDrag(d, e.clientX, e.clientY); render(); }
+    moveGhost(d, e.clientX, e.clientY);
+    var t = targetAt(e.clientX, e.clientY);
+    if (t !== d.t) { d.t = t; setHover(t, !!t && legalTargets(d.id).indexOf(t) >= 0); }
+    if (e.cancelable) e.preventDefault();
   });
+  document.addEventListener('pointerup', function (e) {
+    releaseSuppress(e);
+    var d = DRAG; if (!d || e.pointerId !== d.pid) return;
+    var was = d.on, id = d.id, t = was ? targetAt(e.clientX, e.clientY) : null;
+    dragCleanup();
+    if (!was) return;
+    lastDragEnd = performance.now(); suppressClick = true; dropItem(id, t); render();   /* 拖完後瀏覽器可能補一個 click，吃掉它避免重複使用 */
+  });
+  document.addEventListener('pointercancel', function (e) {
+    if (DRAG && e.pointerId === DRAG.pid) dragCancel('拖曳被中斷了，什麼都沒有改變。');
+    /* 瀏覽器真的取消的指標不會補 click，不必吃下一次點擊；腳本送的（isTrusted=false）取消不代表真實按壓結束，
+       放開後瀏覽器仍可能補 click 到原物品上，所以抑制要保留到真的 pointerup */
+    if (e.isTrusted && suppressPid !== null && e.pointerId === suppressPid) { suppressClick = false; suppressPid = null; }
+  });
+  /* capture 事件用捕獲階段監聽：不論目標是物品或其他元素、是否有人停止冒泡，都一定收得到 */
+  document.addEventListener('gotpointercapture', function (e) { if (DRAG && e.pointerId === DRAG.pid && e.target === DRAG.el) DRAG.captured = true; }, true);
+  document.addEventListener('lostpointercapture', function (e) { if (DRAG && e.pointerId === DRAG.pid) dragCancel('拖曳被中斷了，什麼都沒有改變。'); }, true);
+  window.addEventListener('blur', function () { dragCancel('拖曳已取消，什麼都沒有改變。'); });
+  /* 拖曳中擋掉瀏覽器捲動／長按選單，避免觸控捲動與拖曳衝突 */
+  document.addEventListener('touchmove', function (e) { if (DRAG && DRAG.on && e.cancelable) e.preventDefault(); }, { passive: false });
+  document.addEventListener('contextmenu', function (e) { if (e.target.closest && e.target.closest('.tray-item')) e.preventDefault(); });
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     var k = e.key;
-    if (k === 'Enter' && e.target && e.target.getAttribute && e.target.getAttribute('data-target') && e.target.tagName !== 'BUTTON') { onTarget(e.target.getAttribute('data-target')); e.preventDefault(); return; }
+    if (k === 'Escape' && DRAG) { dragCancel('拖曳已取消，什麼都沒有改變。'); return; }
+    if (DRAG) return;                                       /* 拖曳中鍵盤不改場景／選取（只有 Esc 有作用） */
+    multiTouch = false;
+    if (k === 'Enter' && e.target && e.target.getAttribute && e.target.getAttribute('data-target') && e.target.tagName !== 'BUTTON') { targetTap(e.target.getAttribute('data-target')); e.preventDefault(); return; }
     if (S.phase !== 'play') return;
     var lk = k.toLowerCase();
     if (lk === 'p') { if (S.helpOpen) return; setPaused(!S.paused, 'manual'); return; }
@@ -1111,8 +1616,9 @@ function bind() {
     else if (/^[1-9]$/.test(k)) { var id = ZONE_ITEMS[S.zone][+k - 1]; if (id) { S.sel = S.sel === id ? null : id; render(); } }
     else if (k === 'Enter' && e.target && e.target.tagName !== 'BUTTON' && S.sel) { use(S.sel, defTarget(S.sel)); render(); }
   });
-  document.addEventListener('visibilitychange', function () { if (document.hidden) setPaused(true, 'hidden'); });
-  window.addEventListener('pagehide', function () { setPaused(true, 'hidden'); });
+  /* 離開頁面：先取消拖曳（教學中也一樣），再暫停 */
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { dragCancel('拖曳已取消，什麼都沒有改變。'); setPaused(true, 'hidden'); } });
+  window.addEventListener('pagehide', function () { dragCancel('拖曳已取消，什麼都沒有改變。'); setPaused(true, 'hidden'); });
 }
 
 /* ---------- 主迴圈 ---------- */
@@ -1131,7 +1637,10 @@ setInterval(tick, 100);
 var api = { version: 1, getState: function () {
   var o = JSON.parse(JSON.stringify(S)); var b = S.baby;
   o.needs = { food: b.food, clean: 100 - b.soil, rest: b.rest, mood: b.mood, stamina: S.stamina[S.cg] };
-  o.score = scoreNow(); o.expr = expr(); o.time = fmtClock(); o.testMode = TEST; o.dayLen = DAY_LEN; return o;
+  o.score = scoreNow(); o.expr = expr(); o.time = fmtClock(); o.testMode = TEST; o.dayLen = DAY_LEN;
+  o.dragging = !!(DRAG && DRAG.on); o.curTask = curTask();
+  o.ui = lastModel ? { task: lastModel.task, hint: lastModel.hint, items: lastModel.items.map(function (i) { return i.id; }), acts: lastModel.acts.map(function (a) { return a.a || ('go:' + a.go); }) } : null;
+  return o;
 } };
 if (TEST) api.advance = advance;
 window.NURSERY = Object.freeze(api);
